@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RidgeHub — Project</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f0f4f8;--surface:#fff;--surface2:#eef2f7;--surface3:#dde6f0;
+  --border:rgba(30,80,160,0.08);--border2:rgba(30,80,160,0.15);
+  --accent:#1a5fb4;--accent2:#3584e4;
+  --text:#1a2540;--text2:#4a6080;--text3:#8aaac8;
+  --green:#1a7a4e;--green-bg:rgba(26,122,78,0.08);
+  --yellow:#8a6200;--yellow-bg:rgba(240,192,64,0.1);
+  --red:#c03020;--red-bg:rgba(192,48,32,0.08);
+  --purple:#6b2fa0;
+  --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
+  --radius:12px;--shadow:0 2px 8px rgba(30,80,160,0.08);--shadow-lg:0 8px 32px rgba(30,80,160,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(52,132,228,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1}
+
+/* Header */
+.site-header{padding:.875rem 1.5rem;background:linear-gradient(135deg,#1a5fb4,#3584e4);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 12px rgba(20,60,140,0.25);flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.logo-mark{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500;color:#fff;text-decoration:none;flex-shrink:0}
+.header-project-name{font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+.header-project-num{font-size:11px;color:rgba(255,255,255,0.7);font-family:var(--mono)}
+.btn-hdr{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:7px;padding:7px 14px;font-size:13px;color:#fff;cursor:pointer;font-family:var(--sans);transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.btn-hdr:hover{background:rgba(255,255,255,0.25)}
+.btn{background:none;border:1px solid var(--border2);border-radius:8px;padding:8px 16px;font-size:14px;color:var(--text2);cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--surface2);color:var(--accent);border-color:var(--accent)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn-primary:hover{background:#1550a0;border-color:#1550a0;color:#fff}
+.btn-sm{padding:5px 12px;font-size:13px}
+.btn-danger{background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 12px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.btn-danger:hover{background:var(--red-bg)}
+
+/* Tabs */
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border2);display:flex;overflow-x:auto;position:sticky;top:57px;z-index:99;box-shadow:var(--shadow)}
+.tab{padding:12px 20px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;color:var(--text2);background:none;border-top:none;border-left:none;border-right:none;font-family:var(--sans);white-space:nowrap;transition:all 0.15s}
+.tab:hover{color:var(--accent)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-count{display:inline-block;font-size:11px;font-family:var(--mono);background:var(--surface2);border-radius:99px;padding:1px 7px;margin-left:5px;color:var(--text3)}
+.tab.active .tab-count{background:rgba(26,95,180,0.1);color:var(--accent)}
+
+/* Content */
+.content{max-width:960px;margin:0 auto;padding:1.5rem;padding-bottom:4rem}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Overview */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.overview-grid{grid-template-columns:1fr}}
+.info-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.info-card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.info-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--border);font-size:15px;gap:10px}
+.info-row:last-child{border-bottom:none}
+.info-key{color:var(--text2);font-size:13px;flex-shrink:0}
+.info-val{color:var(--text);font-weight:500;text-align:right;word-break:break-word}
+.info-val.editable{cursor:pointer;border-radius:4px;padding:1px 4px}
+.info-val.editable:hover{background:var(--surface2);outline:1px solid var(--accent)}
+.phase-selector{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.phase-option{padding:6px 14px;border-radius:99px;font-size:13px;font-family:var(--mono);cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);transition:all 0.15s}
+.phase-option:hover{border-color:var(--accent);color:var(--accent)}
+.phase-option.selected{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+
+/* Progress overview */
+.progress-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);grid-column:1/-1}
+.group-progress{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)}
+.group-progress:last-child{border-bottom:none}
+.group-name{font-size:14px;font-weight:500;width:120px;flex-shrink:0}
+.group-bar-wrap{flex:1}
+.group-bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.group-bar-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.4s}
+.group-bar-fill.complete{background:var(--green)}
+.group-pct{font-family:var(--mono);font-size:13px;color:var(--text2);width:45px;text-align:right;flex-shrink:0}
+
+/* Tasks */
+.task-group{margin-bottom:16px}
+.task-group-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:6px;border-bottom:2px solid var(--accent)}
+.task-group-name{font-size:15px;font-weight:700;color:var(--accent)}
+.task-group-count{font-size:12px;font-family:var(--mono);color:var(--text3)}
+.task-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;transition:all 0.15s}
+.task-item:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.task-item.done{opacity:0.5}
+.task-check{width:22px;height:22px;border-radius:5px;border:2px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:all 0.15s}
+.task-check:hover{border-color:var(--green);color:var(--green)}
+.task-check.checked{background:var(--green);border-color:var(--green);color:#fff}
+.task-name{flex:1;font-size:15px}
+.task-name.done-text{text-decoration:line-through;color:var(--text3)}
+.task-due-input{font-family:var(--mono);font-size:12px;border:1px solid var(--border2);border-radius:5px;padding:3px 6px;color:var(--text2);background:var(--surface2);cursor:pointer;outline:none;width:110px}
+.task-due-input:focus{border-color:var(--accent)}
+
+/* Notes */
+.notes-container{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.notes-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.notes-area{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.7;resize:none;outline:none;min-height:300px}
+.notes-area::placeholder{color:var(--text3)}
+.notes-saved{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+/* Schedule */
+.schedule-upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:2.5rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface)}
+.schedule-upload-zone:hover{border-color:var(--accent);background:var(--surface2)}
+.schedule-upload-zone input{display:none}
+.schedule-items{display:flex;flex-direction:column;gap:6px}
+.schedule-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:8px}
+.schedule-item.active-phase{background:rgba(26,95,180,0.06);border-color:var(--accent)}
+.schedule-item.past-phase{opacity:0.5}
+.schedule-check{width:20px;height:20px;border-radius:4px;border:2px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all 0.15s;accent-color:var(--accent)}
+.schedule-check:hover{border-color:var(--accent)}
+.schedule-check.checked{background:var(--accent);border-color:var(--accent);color:#fff}
+.schedule-info{flex:1;min-width:0}
+.schedule-name{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.schedule-dates{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:2px}
+.schedule-pct{font-size:12px;font-family:var(--mono);color:var(--text2);flex-shrink:0}
+.active-badge{font-size:10px;background:var(--accent);color:#fff;padding:2px 7px;border-radius:99px;font-family:var(--mono);flex-shrink:0}
+
+/* Phase tracker */
+.phase-tracker{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);margin-bottom:14px}
+.phase-timeline{display:flex;gap:0;margin-top:10px;overflow-x:auto}
+.phase-step{flex:1;min-width:80px;text-align:center;position:relative}
+.phase-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;right:-50%;height:2px;background:var(--border2);z-index:0}
+.phase-step.done::after{background:var(--green)}
+.phase-step.active::after{background:linear-gradient(90deg,var(--green),var(--border2))}
+.phase-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:12px;margin:0 auto 6px;position:relative;z-index:1;transition:all 0.2s}
+.phase-step.done .phase-dot{background:var(--green);border-color:var(--green);color:#fff}
+.phase-step.active .phase-dot{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(26,95,180,0.15)}
+.phase-step-label{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.phase-step.active .phase-step-label{color:var(--accent);font-weight:600}
+.phase-step.done .phase-step-label{color:var(--green)}
+
+/* Revisions */
+.revision-table{width:100%;border-collapse:collapse;font-size:14px}
+.revision-table th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;font-family:var(--mono);border-bottom:1px solid var(--border2)}
+.revision-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.revision-table tr:last-child td{border-bottom:none}
+.revision-table tr:hover td{background:var(--surface2)}
+.rev-num{font-family:var(--mono);font-weight:600;color:var(--accent)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,50,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;border:1px solid var(--border2);border-top:3px solid var(--accent);width:100%;max-width:540px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-header{padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.modal-title{font-size:18px;font-weight:700;color:var(--accent)}
+.modal-close{background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;padding:0 4px}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:12px}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface2);border-radius:0 0 16px 16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);font-family:var(--mono)}
+input[type=text],input[type=date],input[type=number],select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:15px;font-family:var(--sans);color:var(--text);outline:none;width:100%;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+
+.empty{text-align:center;padding:2rem;color:var(--text3);font-family:var(--mono);font-size:13px}
+
+@media print{
+  .site-header,.tab-bar,.btn,.btn-hdr,.btn-primary,.btn-sm,.btn-danger,.no-print,body::before{display:none!important}
+  body{background:#fff;font-size:12px}
+  .tab-pane{display:block!important}
+  .content{padding:0;max-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="site-header">
+    <div class="header-left">
+      <a href="index.html" class="logo-mark">REI</a>
+      <div style="min-width:0;">
+        <div class="header-project-name" id="headerName">Loading…</div>
+        <div class="header-project-num" id="headerNum"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <a href="index.html" class="btn-hdr">← Projects</a>
+      <button class="btn-hdr no-print" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
+    <button class="tab" onclick="showTab('tasks')" id="tab-tasks">Tasks <span class="tab-count" id="cnt-tasks">0</span></button>
+    <button class="tab" onclick="showTab('schedule')" id="tab-schedule">Schedule</button>
+    <button class="tab" onclick="showTab('prover')" id="tab-prover">ProVer Notes</button>
+    <button class="tab" onclick="showTab('prefab')" id="tab-prefab">Prefab</button>
+    <button class="tab" onclick="showTab('revisions')" id="tab-revisions">Print Revisions <span class="tab-count" id="cnt-revisions">0</span></button>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="tab-pane active" id="pane-overview">
+      <div class="overview-grid">
+        <!-- Phase tracker -->
+        <div class="info-card" style="grid-column:1/-1;">
+          <div class="info-card-title">Project Phase <button class="btn btn-sm" onclick="openEditInfo()" style="font-size:12px;">✎ Edit Info</button></div>
+          <div class="phase-selector" id="phaseSelector"></div>
+          <div class="phase-tracker" style="margin-top:12px;padding:0;border:none;box-shadow:none;">
+            <div class="phase-timeline" id="phaseTimeline"></div>
+          </div>
+        </div>
+
+        <!-- Project info -->
+        <div class="info-card">
+          <div class="info-card-title">Project Info</div>
+          <div id="infoGeneral"></div>
+        </div>
+
+        <!-- Electrical specs -->
+        <div class="info-card">
+          <div class="info-card-title">Electrical Specs</div>
+          <div id="infoSpecs"></div>
+        </div>
+
+        <!-- Key dates -->
+        <div class="info-card">
+          <div class="info-card-title">Key Dates</div>
+          <div id="infoDates"></div>
+        </div>
+
+        <!-- Task progress -->
+        <div class="info-card">
+          <div class="info-card-title">Task Progress</div>
+          <div id="taskProgressOverview"></div>
+        </div>
+
+        <!-- Notes preview -->
+        <div class="info-card" style="grid-column:1/-1;">
+          <div class="info-card-title">Special Notes</div>
+          <div id="notesPreview" style="font-size:15px;line-height:1.7;color:var(--text2);white-space:pre-wrap;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="tab-pane" id="pane-tasks">
+      <div id="tasksContent"></div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="tab-pane" id="pane-schedule">
+      <div id="scheduleContent"></div>
+    </div>
+
+    <!-- PROVER NOTES -->
+    <div class="tab-pane" id="pane-prover">
+      <div class="notes-container">
+        <div class="notes-toolbar">
+          <div style="font-size:15px;font-weight:600;">ProVer Notes</div>
+          <span class="notes-saved" id="proVerSaved"></span>
+        </div>
+        <textarea class="notes-area" id="proVerNotes" placeholder="ProVer meeting notes, spec requirements, design decisions…"></textarea>
+      </div>
+    </div>
+
+    <!-- PREFAB -->
+    <div class="tab-pane" id="pane-prefab">
+      <div class="notes-container" style="margin-bottom:14px;">
+        <div class="notes-toolbar">
+          <div style="font-size:15px;font-weight:600;">Prefab Notes</div>
+          <span class="notes-saved" id="prefabSaved"></span>
+        </div>
+        <textarea class="notes-area" id="prefabNotes" placeholder="Prefab assembly notes, quantities, special instructions…" style="min-height:150px;"></textarea>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Label & Sort List <span style="font-weight:400;color:var(--text3);font-size:11px;margin-left:8px;">from Prefab Board</span></div>
+        <div id="prefabLabelList"><div class="empty">Loading prefab data…</div></div>
+      </div>
+    </div>
+
+    <!-- REVISIONS -->
+    <div class="tab-pane" id="pane-revisions">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:17px;font-weight:700;">Print Revision List</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm no-print" onclick="window.print()">🖨 Print</button>
+          <button class="btn btn-primary btn-sm no-print" onclick="openAddRevision()">+ Add Revision</button>
+        </div>
+      </div>
+      <div class="info-card">
+        <table class="revision-table" id="revisionTable">
+          <thead><tr><th>Rev #</th><th>Date Received</th><th>Description</th><th class="no-print">Actions</th></tr></thead>
+          <tbody id="revisionBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit info modal -->
+<div class="modal-overlay" id="editInfoModal" onclick="if(event.target===this)closeEditInfo()">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Project Info</div><button class="modal-close" onclick="closeEditInfo()">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><div class="form-label">Project Name</div><input type="text" id="eiName"/></div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group" style="flex:1;"><div class="form-label">Project #</div><input type="text" id="eiNum"/></div>
+        <div class="form-group" style="flex:1;"><div class="form-label">Contract Amount</div><input type="text" id="eiContract"/></div>
+      </div>
+      <div class="form-group"><div class="form-label">GC Name</div><input type="text" id="eiGC"/></div>
+      <div class="form-group"><div class="form-label">GC PM Contact</div><input type="text" id="eiGCPM"/></div>
+      <div class="form-group"><div class="form-label">Address</div><input type="text" id="eiAddr"/></div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group"><div class="form-label">ProVer Date</div><input type="date" id="eiProVerDate"/></div>
+        <div class="form-group"><div class="form-label">Hand Off Date</div><input type="date" id="eiHandOff"/></div>
+        <div class="form-group"><div class="form-label">As-Builts Due</div><input type="date" id="eiAsBuilts"/></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group"><div class="form-label">Device Color</div><input type="text" id="eiDevColor"/></div>
+        <div class="form-group"><div class="form-label">Wall Plate Color</div><input type="text" id="eiPlateColor"/></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group"><div class="form-label">In-Wall Wiring</div><input type="text" id="eiInWall"/></div>
+        <div class="form-group"><div class="form-label">Overhead Wiring</div><input type="text" id="eiOverhead"/></div>
+      </div>
+      <div class="form-group"><div class="form-label">Special Notes</div><textarea id="eiNotes"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeEditInfo()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditInfo()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add revision modal -->
+<div class="modal-overlay" id="addRevisionModal" onclick="if(event.target===this)closeAddRevision()">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Print Revision</div><button class="modal-close" onclick="closeAddRevision()">×</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:10px;">
+        <div class="form-group" style="flex:1;"><div class="form-label">Revision #</div><input type="text" id="arNum" placeholder="e.g. 1, 2, ASI-1"/></div>
+        <div class="form-group" style="flex:1;"><div class="form-label">Date Received</div><input type="date" id="arDate"/></div>
+      </div>
+      <div class="form-group"><div class="form-label">Description of Changes</div><textarea id="arDesc" placeholder="What changed in this revision set…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAddRevision()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRevision()">Add Revision</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const REPO       = 'RidgeHub/Projects';
+const FILE       = 'projects.json';
+const API        = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+const RAW        = `https://raw.githubusercontent.com/${REPO}/main/${FILE}`;
+const PREFAB_RAW = 'https://raw.githubusercontent.com/RidgeHub/Prefab/main/prefab-projects.json';
+const GCAL_CLIENT = '967630255564-bdnrkm82rjd2r9m38relv62rnn00i12b.apps.googleusercontent.com';
+const GCAL_SCOPE  = 'https://www.googleapis.com/auth/calendar.events';
+const REDIRECT    = window.location.origin + window.location.pathname;
+
+let project = null, allProjects = [], fileSha = null;
+let googleToken = localStorage.getItem('dash_google_token') || null;
+
+const urlParams = new URLSearchParams(window.location.search);
+const projectId = urlParams.get('id');
+
+function getGHToken(){ return localStorage.getItem('dash_gh_token') || ''; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function genId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function fmt(d){ return d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+
+/* ── OAuth ── */
+function checkOAuthReturn(){
+  const hash = window.location.hash; if(!hash) return;
+  const p = new URLSearchParams(hash.slice(1)); const token = p.get('access_token');
+  if(token){ googleToken = token; localStorage.setItem('dash_google_token', token); history.replaceState(null,'',window.location.pathname+window.location.search); }
+}
+
+/* ── Load ── */
+async function load(){
+  if(!projectId){ document.getElementById('headerName').textContent = 'No project selected'; return; }
+  try{
+    const res = await fetch(RAW + '?v=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    allProjects = await res.json();
+    project = allProjects.find(p => p.id === projectId);
+    if(!project){ document.getElementById('headerName').textContent = 'Project not found'; return; }
+    const token = getGHToken();
+    if(token){
+      const meta = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+      if(meta.ok) fileSha = (await meta.json()).sha;
+    }
+    renderAll();
+    loadPrefabData();
+  }catch(e){ document.getElementById('headerName').textContent = 'Error loading project'; }
+}
+
+async function save(){
+  const token = getGHToken(); if(!token) return;
+  const idx = allProjects.findIndex(p => p.id === projectId);
+  if(idx !== -1) allProjects[idx] = project;
+  const body = {message:'Update project', content: btoa(unescape(encodeURIComponent(JSON.stringify(allProjects,null,2))))};
+  if(fileSha) body.sha = fileSha;
+  const res = await fetch(API, {method:'PUT', headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'}, body:JSON.stringify(body)});
+  if(res.ok) fileSha = (await res.json()).content.sha;
+}
+
+/* ── Tabs ── */
+function showTab(name){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pane-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+/* ── Render all ── */
+function renderAll(){
+  if(!project) return;
+  document.getElementById('headerName').textContent = project.name;
+  document.getElementById('headerNum').textContent = project.num ? '#'+project.num : '';
+  document.title = `${project.name} — RidgeHub Projects`;
+
+  renderOverview();
+  renderTasks();
+  renderSchedule();
+  renderRevisions();
+  renderNotes();
+
+  // Update counts
+  const tasks = project.tasks||[];
+  const openTasks = tasks.filter(t=>!t.done).length;
+  document.getElementById('cnt-tasks').textContent = openTasks;
+  document.getElementById('cnt-revisions').textContent = (project.revisions||[]).length;
+}
+
+/* ── Overview ── */
+const PHASES = ['prover','design','prefab','active','complete'];
+const PHASE_LABELS = {prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
+const PHASE_ICONS  = {prover:'📋',design:'✏️',prefab:'📦',active:'🔨',complete:'✅'};
+
+function renderOverview(){
+  // Phase selector
+  const ps = document.getElementById('phaseSelector');
+  ps.innerHTML = PHASES.map(ph => `<button class="phase-option ${project.phase===ph?'selected':''}" onclick="setPhase('${ph}')">${PHASE_LABELS[ph]}</button>`).join('');
+
+  // Phase timeline
+  const pt = document.getElementById('phaseTimeline');
+  const currentIdx = PHASES.indexOf(project.phase);
+  pt.innerHTML = PHASES.map((ph, i) => {
+    const cls = i < currentIdx ? 'done' : i === currentIdx ? 'active' : '';
+    return `<div class="phase-step ${cls}">
+      <div class="phase-dot">${i <= currentIdx ? PHASE_ICONS[ph] : ''}</div>
+      <div class="phase-step-label">${PHASE_LABELS[ph]}</div>
+    </div>`;
+  }).join('');
+
+  // Info sections
+  const infoRow = (k, v) => `<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${esc(v||'—')}</span></div>`;
+  document.getElementById('infoGeneral').innerHTML =
+    infoRow('GC', project.gc) + infoRow('GC PM', project.gcpm) +
+    infoRow('Address', project.addr) + infoRow('Contract', project.contract);
+  document.getElementById('infoSpecs').innerHTML =
+    infoRow('Device Color', project.devColor) + infoRow('Wall Plate Color', project.plateColor) +
+    infoRow('In-Wall Wiring', project.inWall) + infoRow('Overhead Wiring', project.overhead);
+  document.getElementById('infoDates').innerHTML =
+    infoRow('ProVer Date', project.proVerDate ? fmt(project.proVerDate) : '') +
+    infoRow('Hand Off Date', project.handOffDate ? fmt(project.handOffDate) : '') +
+    infoRow('As-Builts Due', project.asBuiltsDate ? fmt(project.asBuiltsDate) : '');
+  document.getElementById('notesPreview').textContent = project.notes || 'No special notes.';
+
+  // Task progress by group
+  const tasks = project.tasks||[];
+  const groups = [...new Set(tasks.map(t=>t.group))];
+  const progHTML = groups.map(g => {
+    const gt = tasks.filter(t=>t.group===g);
+    const done = gt.filter(t=>t.done).length;
+    const pct = gt.length ? Math.round((done/gt.length)*100) : 0;
+    return `<div class="group-progress">
+      <div class="group-name">${esc(g)}</div>
+      <div class="group-bar-wrap"><div class="group-bar"><div class="group-bar-fill ${pct===100?'complete':''}" style="width:${pct}%"></div></div></div>
+      <div class="group-pct">${done}/${gt.length}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('taskProgressOverview').innerHTML = progHTML || '<div class="empty">No tasks yet</div>';
+}
+
+function setPhase(ph){
+  project.phase = ph;
+  save();
+  renderOverview();
+}
+
+/* ── Tasks ── */
+function renderTasks(){
+  const tasks = project.tasks||[];
+  const groups = [...new Set(tasks.map(t=>t.group))];
+  const el = document.getElementById('tasksContent');
+  if(!tasks.length){ el.innerHTML='<div class="empty">No tasks generated yet.</div>'; return; }
+  el.innerHTML = groups.map(g => {
+    const gt = tasks.filter(t=>t.group===g);
+    const done = gt.filter(t=>t.done).length;
+    return `<div class="task-group">
+      <div class="task-group-header">
+        <div class="task-group-name">${esc(g)}</div>
+        <div class="task-group-count">${done}/${gt.length} complete</div>
+      </div>
+      ${gt.map((t,i) => {
+        const taskIdx = tasks.indexOf(t);
+        return `<div class="task-item ${t.done?'done':''}" id="ptask-${taskIdx}">
+          <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${taskIdx})">${t.done?'✓':''}</div>
+          <div class="task-name ${t.done?'done-text':''}">${esc(t.task.replace(/^\[.*?\]\s*/,''))}</div>
+          <input type="date" class="task-due-input" value="${t.due||''}" onchange="setTaskDue(${taskIdx},this.value)" title="Set due date"/>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+
+  const open = tasks.filter(t=>!t.done).length;
+  document.getElementById('cnt-tasks').textContent = open;
+}
+
+function toggleTask(idx){
+  if(!project.tasks[idx]) return;
+  project.tasks[idx].done = !project.tasks[idx].done;
+  project.tasks[idx].doneAt = project.tasks[idx].done ? new Date().toISOString() : null;
+  save(); renderTasks(); renderOverview();
+}
+
+function setTaskDue(idx, val){
+  if(!project.tasks[idx]) return;
+  project.tasks[idx].due = val;
+  project.tasks[idx].col = val ? 'due' : 'tasks';
+  save();
+}
+
+/* ── Schedule ── */
+function renderSchedule(){
+  const el = document.getElementById('scheduleContent');
+  const items = project.scheduleItems||[];
+  let html = '';
+
+  // Phase tracker from schedule
+  if(items.length){
+    const today = new Date();
+    const active = items.filter(i=>i.selected && new Date(i.start)<=today && new Date(i.finish)>=today);
+    const currentPhaseFromSchedule = active.length ? active[0].name : null;
+    if(currentPhaseFromSchedule){
+      html += `<div class="phase-tracker" style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px;">Current Phase (from schedule)</div>
+        <div style="font-size:16px;color:var(--accent);font-weight:700;">${esc(currentPhaseFromSchedule)}</div>
+        <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:4px;">${fmt(active[0].start)} → ${fmt(active[0].finish)}</div>
+      </div>`;
+    }
+  }
+
+  // Upload zone if no schedule
+  if(!items.length){
+    html += `<div class="schedule-upload-zone" onclick="document.getElementById('scheduleFile').click()">
+      <input type="file" id="scheduleFile" accept=".xlsx,.xls" onchange="uploadSchedule(this)"/>
+      <div style="font-size:36px;margin-bottom:12px;">📅</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Upload Project Schedule</div>
+      <div style="font-size:13px;color:var(--text3);">Excel file (.xlsx) with Item Name, Start, and Finish columns</div>
+    </div>`;
+  } else {
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:17px;font-weight:700;">Schedule Items</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm no-print" onclick="addCheckedToCalendar()">📅 Add Selected to Calendar</button>
+        <button class="btn btn-sm no-print" onclick="document.getElementById('scheduleFile').click()">↑ Replace Schedule</button>
+        <input type="file" id="scheduleFile" accept=".xlsx,.xls" onchange="uploadSchedule(this)" style="display:none;"/>
+      </div>
+    </div>
+    <div class="schedule-items">
+      ${items.map((item,i) => {
+        const today = new Date();
+        const start = new Date(item.start+'T00:00:00');
+        const finish = new Date(item.finish+'T00:00:00');
+        const isPast = finish < today;
+        const isActive = start <= today && finish >= today;
+        return `<div class="schedule-item ${isActive?'active-phase':''} ${isPast?'past-phase':''}">
+          <div class="schedule-check ${item.selected?'checked':''}" onclick="toggleScheduleItem(${i})">${item.selected?'✓':''}</div>
+          <div class="schedule-info">
+            <div class="schedule-name">${esc(item.name)}</div>
+            <div class="schedule-dates">${fmt(item.start)} → ${fmt(item.finish)}${item.complete?' · '+item.complete+' complete':''}</div>
+          </div>
+          ${isActive?'<span class="active-badge">Active</span>':''}
+          ${item.pct!==undefined?`<div class="schedule-pct">${item.pct}%</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+function uploadSchedule(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      if(rows.length < 2){ alert('Schedule appears empty.'); return; }
+      const hdr = rows[0].map(h=>String(h||'').toLowerCase().trim());
+      const ci = names => { for(const n of names){ const i=hdr.findIndex(h=>h.includes(n)); if(i!==-1)return i; } return -1; };
+      const iName = ci(['item name','activity','task','name','description']);
+      const iStart = ci(['start']);
+      const iFinish = ci(['finish','end','complete date']);
+      const iPct = ci(['complete','%','percent','progress']);
+      if(iName===-1||iStart===-1||iFinish===-1){ alert('Could not find Item Name, Start, and Finish columns. Please check your column headers.'); return; }
+      const items = [];
+      for(let i=1;i<rows.length;i++){
+        const r=rows[i];
+        const name = String(r[iName]||'').trim();
+        const startRaw = r[iStart];
+        const finishRaw = r[iFinish];
+        if(!name||!startRaw||!finishRaw) continue;
+        // Parse Excel date serial or string
+        const parseDate = v => {
+          if(typeof v === 'number'){ const d=new Date(Math.round((v-25569)*86400*1000)); return d.toISOString().slice(0,10); }
+          const s=String(v).trim(); if(!s) return '';
+          const d=new Date(s); return isNaN(d)?s:d.toISOString().slice(0,10);
+        };
+        const start = parseDate(startRaw);
+        const finish = parseDate(finishRaw);
+        const pct = iPct!==-1?String(r[iPct]||'').replace('%','').trim():'';
+        items.push({name, start, finish, pct: pct||undefined, selected:false, complete: pct?pct+'%':undefined});
+      }
+      if(!items.length){ alert('No valid schedule items found.'); return; }
+      project.scheduleItems = items;
+      save(); renderSchedule();
+    }catch(err){ alert('Error reading schedule: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function toggleScheduleItem(i){
+  if(!project.scheduleItems[i]) return;
+  project.scheduleItems[i].selected = !project.scheduleItems[i].selected;
+  save(); renderSchedule();
+}
+
+async function addCheckedToCalendar(){
+  if(!googleToken){
+    const p = new URLSearchParams({client_id:GCAL_CLIENT,redirect_uri:REDIRECT,response_type:'token',scope:GCAL_SCOPE,prompt:'consent'});
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${p}`; return;
+  }
+  const selected = (project.scheduleItems||[]).filter(i=>i.selected);
+  if(!selected.length){ alert('Check some schedule items first.'); return; }
+  let added = 0;
+  for(const item of selected){
+    try{
+      const end = new Date(item.finish+'T00:00:00'); end.setDate(end.getDate()+1);
+      await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        method:'POST',
+        headers:{Authorization:`Bearer ${googleToken}`,'Content-Type':'application/json'},
+        body: JSON.stringify({
+          summary: `${project.name} — ${item.name}`,
+          description: `Project #${project.num||''}\nPhase: ${item.name}\n${item.complete?'Complete: '+item.complete:''}`,
+          start:{date:item.start}, end:{date:end.toISOString().slice(0,10)}
+        })
+      });
+      added++;
+    }catch(e){}
+  }
+  alert(`Added ${added} item${added!==1?'s':''} to Google Calendar.`);
+}
+
+/* ── Notes ── */
+function renderNotes(){
+  const pv = document.getElementById('proVerNotes');
+  const pf = document.getElementById('prefabNotes');
+  pv.value = project.proVerNotes||'';
+  pf.value = project.prefabNotes||'';
+  let pvTimer, pfTimer;
+  pv.addEventListener('input',()=>{ clearTimeout(pvTimer); pvTimer=setTimeout(()=>{ project.proVerNotes=pv.value; save(); const s=document.getElementById('proVerSaved'); s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); setTimeout(()=>s.textContent='',3000); },800); });
+  pf.addEventListener('input',()=>{ clearTimeout(pfTimer); pfTimer=setTimeout(()=>{ project.prefabNotes=pf.value; save(); const s=document.getElementById('prefabSaved'); s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); setTimeout(()=>s.textContent='',3000); },800); });
+}
+
+/* ── Prefab label list ── */
+async function loadPrefabData(){
+  const el = document.getElementById('prefabLabelList');
+  try{
+    const res = await fetch(PREFAB_RAW + '?v=' + Date.now());
+    if(!res.ok) throw new Error();
+    const prefabProjects = await res.json();
+    // Match by project number
+    const match = prefabProjects.find(p => p.num && project.num && String(p.num).trim() === String(project.num).trim());
+    if(!match){ el.innerHTML = `<div class="empty">No matching prefab project found for #${esc(project.num||'')}.<br>Make sure the project number matches in the Prefab Board.</div>`; return; }
+    const assemblies = match.assemblies||[];
+    if(!assemblies.length){ el.innerHTML = '<div class="empty">No assemblies in this prefab project.</div>'; return; }
+    // Group by room
+    const byRoom = {};
+    assemblies.forEach(a=>{ const r=a.room||'?'; if(!byRoom[r])byRoom[r]=[]; byRoom[r].push(a); });
+    const rooms = Object.keys(byRoom).sort();
+    el.innerHTML = rooms.map(room => {
+      const items = byRoom[room];
+      const done = items.filter(a=>a.labelDone).length;
+      return `<div style="margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">Room ${esc(room)} <span style="font-weight:400;">${done}/${items.length}</span></div>
+        ${items.map(a => {
+          const gang = a.plaster ? (a.plaster.match(/\b([1-4])\s*[Gg](ang)?\b/)||[])[0] || '' : '';
+          const devDesc = (a.devices||[]).map(d=>d.replace(/\s*\(\d+\)\s*/g,'').split('/').map(p=>p.trim()).filter(p=>p&&!/hospital grade|commercial grade/i.test(p)).join(' - ')).join(' + ');
+          const desc = [gang.replace(/ang/i,'G'), devDesc].filter(p=>p).join(' / ');
+          return `<div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${a.labelDone?'var(--green)':'var(--border2)'};flex-shrink:0;"></div>
+            <div style="font-family:var(--mono);font-weight:700;width:80px;flex-shrink:0;">${esc(a.labelId)}</div>
+            <div style="color:var(--text2);flex:1;">${esc(desc||a.code)}</div>
+            ${a.labelDone?'<span style="font-size:11px;color:var(--green);font-family:var(--mono);">✓ Done</span>':''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('');
+  }catch(e){ el.innerHTML = '<div class="empty">Could not load prefab data.</div>'; }
+}
+
+/* ── Revisions ── */
+function renderRevisions(){
+  const tbody = document.getElementById('revisionBody');
+  const revs = project.revisions||[];
+  if(!revs.length){ tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text3);font-family:var(--mono);">No revisions logged yet.</td></tr>`; return; }
+  tbody.innerHTML = revs.map((r,i) => `<tr>
+    <td><span class="rev-num">Rev ${esc(r.num)}</span></td>
+    <td style="font-family:var(--mono);font-size:13px;">${fmt(r.date)}</td>
+    <td>${esc(r.desc)}</td>
+    <td class="no-print"><button class="btn-danger btn-sm" onclick="deleteRevision(${i})">Delete</button></td>
+  </tr>`).join('');
+  document.getElementById('cnt-revisions').textContent = revs.length;
+}
+
+function openAddRevision(){
+  document.getElementById('arNum').value='';
+  document.getElementById('arDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('arDesc').value='';
+  document.getElementById('addRevisionModal').classList.add('open');
+}
+function closeAddRevision(){ document.getElementById('addRevisionModal').classList.remove('open'); }
+function saveRevision(){
+  const num = document.getElementById('arNum').value.trim();
+  const date = document.getElementById('arDate').value;
+  const desc = document.getElementById('arDesc').value.trim();
+  if(!num||!date){ alert('Enter revision number and date.'); return; }
+  if(!project.revisions) project.revisions=[];
+  project.revisions.push({num,date,desc,addedAt:Date.now()});
+  save(); renderRevisions(); closeAddRevision();
+}
+function deleteRevision(i){
+  if(!confirm('Delete this revision?')) return;
+  project.revisions.splice(i,1); save(); renderRevisions();
+}
+
+/* ── Edit info ── */
+function openEditInfo(){
+  ['eiName','eiNum','eiGC','eiGCPM','eiAddr','eiContract','eiDevColor','eiPlateColor','eiInWall','eiOverhead','eiNotes','eiProVerDate','eiHandOff','eiAsBuilts'].forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiContract:'contract',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate'};
+    el.value = project[map[id]]||'';
+  });
+  document.getElementById('editInfoModal').classList.add('open');
+}
+function closeEditInfo(){ document.getElementById('editInfoModal').classList.remove('open'); }
+function saveEditInfo(){
+  const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiContract:'contract',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate'};
+  Object.entries(map).forEach(([elId, key]) => { const el=document.getElementById(elId); if(el) project[key]=el.value.trim(); });
+  save(); closeEditInfo(); renderAll();
+}
+
+/* ── Init ── */
+checkOAuthReturn();
+load();
+</script>
+</body>
+</html>
