@@ -188,8 +188,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
     <button class="tab" onclick="showTab('tasks')" id="tab-tasks">Tasks <span class="tab-count" id="cnt-tasks">0</span></button>
     <button class="tab" onclick="showTab('schedule')" id="tab-schedule">Schedule</button>
-    <button class="tab" onclick="showTab('prover')" id="tab-prover">ProVer Notes</button>
-    <button class="tab" onclick="showTab('prefab')" id="tab-prefab">Prefab</button>
+    <button class="tab" onclick="showTab('notes-claude')" id="tab-notes-claude">Claude Notes</button>
+    <button class="tab" onclick="showTab('notes-prover')" id="tab-notes-prover">ProVer Notes</button>
+    <button class="tab" onclick="showTab('notes-siteprint')" id="tab-notes-siteprint">SitePrint Notes</button>
+    <button class="tab" onclick="showTab('notes-design')" id="tab-notes-design">Design Notes</button>
+    <button class="tab" onclick="showTab('notes-prefab')" id="tab-notes-prefab">Prefab Notes</button>
     <button class="tab" onclick="showTab('revisions')" id="tab-revisions">Print Revisions <span class="tab-count" id="cnt-revisions">0</span></button>
   </div>
 
@@ -249,28 +252,61 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       <div id="scheduleContent"></div>
     </div>
 
-    <!-- PROVER NOTES -->
-    <div class="tab-pane" id="pane-prover">
+    <!-- CLAUDE NOTES -->
+    <div class="tab-pane" id="pane-notes-claude">
       <div class="notes-container">
         <div class="notes-toolbar">
-          <div style="font-size:15px;font-weight:600;">ProVer Notes</div>
-          <span class="notes-saved" id="proVerSaved"></span>
+          <div style="font-size:15px;font-weight:600;">Claude Notes</div>
+          <span class="notes-saved" id="savedClaude"></span>
         </div>
-        <textarea class="notes-area" id="proVerNotes" placeholder="ProVer meeting notes, spec requirements, design decisions…"></textarea>
+        <textarea class="notes-area" id="notesClaude" placeholder="Notes from Claude, AI-generated summaries, research…"></textarea>
       </div>
     </div>
 
-    <!-- PREFAB -->
-    <div class="tab-pane" id="pane-prefab">
+    <!-- PROVER NOTES -->
+    <div class="tab-pane" id="pane-notes-prover">
+      <div class="notes-container">
+        <div class="notes-toolbar">
+          <div style="font-size:15px;font-weight:600;">ProVer Notes</div>
+          <span class="notes-saved" id="savedProver"></span>
+        </div>
+        <textarea class="notes-area" id="notesProver" placeholder="ProVer meeting notes, spec requirements, design decisions…"></textarea>
+      </div>
+    </div>
+
+    <!-- SITEPRINT NOTES -->
+    <div class="tab-pane" id="pane-notes-siteprint">
+      <div class="notes-container">
+        <div class="notes-toolbar">
+          <div style="font-size:15px;font-weight:600;">SitePrint Notes</div>
+          <span class="notes-saved" id="savedSiteprint"></span>
+        </div>
+        <textarea class="notes-area" id="notesSiteprint" placeholder="CAD file notes, print prep, site print instructions…"></textarea>
+      </div>
+    </div>
+
+    <!-- DESIGN NOTES -->
+    <div class="tab-pane" id="pane-notes-design">
+      <div class="notes-container">
+        <div class="notes-toolbar">
+          <div style="font-size:15px;font-weight:600;">Design Notes</div>
+          <span class="notes-saved" id="savedDesign"></span>
+        </div>
+        <textarea class="notes-area" id="notesDesign" placeholder="Design decisions, revision notes, Bluebeam notes…"></textarea>
+      </div>
+    </div>
+
+    <!-- PREFAB NOTES -->
+    <div class="tab-pane" id="pane-notes-prefab">
       <div class="notes-container" style="margin-bottom:14px;">
         <div class="notes-toolbar">
           <div style="font-size:15px;font-weight:600;">Prefab Notes</div>
-          <span class="notes-saved" id="prefabSaved"></span>
+          <span class="notes-saved" id="savedPrefab"></span>
         </div>
-        <textarea class="notes-area" id="prefabNotes" placeholder="Prefab assembly notes, quantities, special instructions…" style="min-height:150px;"></textarea>
+        <textarea class="notes-area" id="notesPrefab" placeholder="Prefab assembly notes, quantities, special instructions…" style="min-height:150px;"></textarea>
       </div>
       <div class="info-card">
-        <div class="info-card-title">Label & Sort List <span style="font-weight:400;color:var(--text3);font-size:11px;margin-left:8px;">from Prefab Board</span></div>
+        <div class="info-card-title">Label &amp; Sort List <span style="font-weight:400;color:var(--text3);font-size:11px;margin-left:8px;">from Prefab Board</span></div>
         <div id="prefabLabelList"><div class="empty">Loading prefab data…</div></div>
       </div>
     </div>
@@ -301,13 +337,18 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <div class="modal-header"><div class="modal-title">Edit Project Info</div><button class="modal-close" onclick="closeEditInfo()">×</button></div>
     <div class="modal-body">
       <div class="form-group"><div class="form-label">Project Name</div><input type="text" id="eiName"/></div>
-      <div style="display:flex;gap:10px;">
-        <div class="form-group" style="flex:1;"><div class="form-label">Project #</div><input type="text" id="eiNum"/></div>
-        <div class="form-group" style="flex:1;"><div class="form-label">Contract Amount</div><input type="text" id="eiContract"/></div>
-      </div>
+      <div class="form-group"><div class="form-label">Project #</div><input type="text" id="eiNum"/></div>
       <div class="form-group"><div class="form-label">GC Name</div><input type="text" id="eiGC"/></div>
       <div class="form-group"><div class="form-label">GC PM Contact</div><input type="text" id="eiGCPM"/></div>
       <div class="form-group"><div class="form-label">Address</div><input type="text" id="eiAddr"/></div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group" style="flex:2;"><div class="form-label">Foreman Name</div><input type="text" id="eiForemanName" placeholder="Foreman name"/></div>
+        <div class="form-group" style="flex:1;"><div class="form-label">Foreman Phone</div><input type="text" id="eiForemanPhone" placeholder="317-555-0000"/></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group" style="flex:2;"><div class="form-label">Foreman Email</div><input type="text" id="eiForemanEmail" placeholder="foreman@email.com"/></div>
+        <div class="form-group" style="flex:2;"><div class="form-label">REI PM Name</div><input type="text" id="eiReiPM" placeholder="Project manager name"/></div>
+      </div>
       <div style="display:flex;gap:10px;">
         <div class="form-group"><div class="form-label">ProVer Date</div><input type="date" id="eiProVerDate"/></div>
         <div class="form-group"><div class="form-label">Hand Off Date</div><input type="date" id="eiHandOff"/></div>
@@ -668,13 +709,28 @@ async function addCheckedToCalendar(){
 
 /* ── Notes ── */
 function renderNotes(){
-  const pv = document.getElementById('proVerNotes');
-  const pf = document.getElementById('prefabNotes');
-  pv.value = project.proVerNotes||'';
-  pf.value = project.prefabNotes||'';
-  let pvTimer, pfTimer;
-  pv.addEventListener('input',()=>{ clearTimeout(pvTimer); pvTimer=setTimeout(()=>{ project.proVerNotes=pv.value; save(); const s=document.getElementById('proVerSaved'); s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); setTimeout(()=>s.textContent='',3000); },800); });
-  pf.addEventListener('input',()=>{ clearTimeout(pfTimer); pfTimer=setTimeout(()=>{ project.prefabNotes=pf.value; save(); const s=document.getElementById('prefabSaved'); s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); setTimeout(()=>s.textContent='',3000); },800); });
+  const NOTE_FIELDS = [
+    {elId:'notesClaude',    key:'notesClaude',    savedId:'savedClaude'},
+    {elId:'notesProver',    key:'notesProver',    savedId:'savedProver'},
+    {elId:'notesSiteprint', key:'notesSiteprint', savedId:'savedSiteprint'},
+    {elId:'notesDesign',    key:'notesDesign',    savedId:'savedDesign'},
+    {elId:'notesPrefab',    key:'notesPrefab',    savedId:'savedPrefab'},
+  ];
+  NOTE_FIELDS.forEach(({elId, key, savedId}) => {
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.value = project[key]||'';
+    let timer;
+    el.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        project[key] = el.value;
+        save();
+        const s = document.getElementById(savedId);
+        if(s){ s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); setTimeout(()=>s.textContent='',3000); }
+      }, 800);
+    });
+  });
 }
 
 /* ── Prefab label list ── */
@@ -753,14 +809,14 @@ function deleteRevision(i){
 function openEditInfo(){
   ['eiName','eiNum','eiGC','eiGCPM','eiAddr','eiContract','eiDevColor','eiPlateColor','eiInWall','eiOverhead','eiNotes','eiProVerDate','eiHandOff','eiAsBuilts'].forEach(id => {
     const el = document.getElementById(id); if(!el) return;
-    const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiContract:'contract',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate'};
+    const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate',eiForemanName:'foremanName',eiForemanPhone:'foremanPhone',eiForemanEmail:'foremanEmail',eiReiPM:'reiPM'};
     el.value = project[map[id]]||'';
   });
   document.getElementById('editInfoModal').classList.add('open');
 }
 function closeEditInfo(){ document.getElementById('editInfoModal').classList.remove('open'); }
 function saveEditInfo(){
-  const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiContract:'contract',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate'};
+  const map = {eiName:'name',eiNum:'num',eiGC:'gc',eiGCPM:'gcpm',eiAddr:'addr',eiDevColor:'devColor',eiPlateColor:'plateColor',eiInWall:'inWall',eiOverhead:'overhead',eiNotes:'notes',eiProVerDate:'proVerDate',eiHandOff:'handOffDate',eiAsBuilts:'asBuiltsDate',eiForemanName:'foremanName',eiForemanPhone:'foremanPhone',eiForemanEmail:'foremanEmail',eiReiPM:'reiPM'};
   Object.entries(map).forEach(([elId, key]) => { const el=document.getElementById(elId); if(el) project[key]=el.value.trim(); });
   save(); closeEditInfo(); renderAll();
 }
