@@ -237,9 +237,10 @@
         "due": "",
         "subtasks": [],
         "taskDone": false,
-        "done": false,
+        "done": true,
         "createdAt": 1779981559172,
-        "movedAt": 1779981559172
+        "movedAt": 1779981559172,
+        "doneAt": "2026-05-28T17:40:52.752Z"
       },
       {
         "id": "mppn2938j4q",
