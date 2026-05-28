@@ -183,7 +183,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       </div>
     </div>
     <div style="display:flex;gap:8px;flex-shrink:0;">
-      <a href="index.html" class="btn-hdr">← Projects</a>
+      <button class="btn-hdr" onclick="window.close()">✕ Close</button>
       <button class="btn-hdr no-print" onclick="window.print()">🖨 Print</button>
     </div>
   </div>
@@ -427,16 +427,14 @@ function checkOAuthReturn(){
 async function load(){
   if(!projectId){ document.getElementById('headerName').textContent = 'No project selected'; return; }
   try{
-    const res = await fetch(RAW + '?v=' + Date.now());
+    const token = getGHToken();
+    const res = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    allProjects = await res.json();
+    const d = await res.json();
+    fileSha = d.sha;
+    allProjects = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
     project = allProjects.find(p => p.id === projectId);
     if(!project){ document.getElementById('headerName').textContent = 'Project not found'; return; }
-    const token = getGHToken();
-    if(token){
-      const meta = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
-      if(meta.ok) fileSha = (await meta.json()).sha;
-    }
     renderAll();
     loadPrefabData();
   }catch(e){ document.getElementById('headerName').textContent = 'Error loading project'; }
@@ -481,9 +479,9 @@ function renderAll(){
 }
 
 /* ── Overview ── */
-const PHASES = ['prover','design','prefab','active','complete'];
-const PHASE_LABELS = {prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
-const PHASE_ICONS  = {prover:'📋',design:'✏️',prefab:'📦',active:'🔨',complete:'✅'};
+const PHASES = ['notstarted','prover','design','prefab','active','complete'];
+const PHASE_LABELS = {notstarted:'Not Started',prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
+const PHASE_ICONS  = {notstarted:'⏸',prover:'📋',design:'✏️',prefab:'📦',active:'🔨',complete:'✅'};
 
 function renderOverview(){
   // Phase selector
