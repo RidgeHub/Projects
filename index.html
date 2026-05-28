@@ -112,7 +112,7 @@ textarea{resize:vertical;min-height:80px}
       </div>
     </div>
     <div style="display:flex;gap:8px;">
-      <a href="https://ridgehub.github.io/dashboard" class="btn-hdr">← Dashboard</a>
+      <button class="btn-hdr" onclick="window.close()">✕ Close</button>
       <button class="btn-hdr" onclick="openNewProject()">+ New Project</button>
     </div>
   </div>
@@ -225,16 +225,13 @@ function fmt(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short
 /* ── Load projects ── */
 async function loadProjects(){
   try{
-    const res = await fetch(RAW + '?v=' + Date.now());
-    if(res.status === 404){ projects = []; fileSha = null; render(); return; }
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    projects = await res.json();
-    // Get SHA for saves
     const token = getGHToken();
-    if(token){
-      const meta = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
-      if(meta.ok) fileSha = (await meta.json()).sha;
-    }
+    const meta = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+    if(meta.status === 404){ projects = []; fileSha = null; render(); return; }
+    if(!meta.ok) throw new Error('HTTP ' + meta.status);
+    const d = await meta.json();
+    fileSha = d.sha;
+    projects = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
     document.getElementById('lastSync').textContent = 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     render();
   }catch(e){
