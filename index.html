@@ -136,6 +136,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="filter-bar">
       <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
       <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
+      <button class="filter-btn" onclick="setFilter('notstarted',this)">Not Started</button>
       <button class="filter-btn" onclick="setFilter('prover',this)">ProVer</button>
       <button class="filter-btn" onclick="setFilter('prefab',this)">Prefab</button>
       <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
@@ -169,6 +170,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="form-group"><div class="form-label">Contract Amount</div><input type="text" id="npContract" placeholder="$0.00"/></div>
         <div class="form-group"><div class="form-label">Phase</div>
           <select id="npPhase">
+            <option value="notstarted">Not Started</option>
             <option value="prover">ProVer</option>
             <option value="design">Design</option>
             <option value="prefab">Prefab</option>
@@ -251,8 +253,8 @@ async function saveProjects(){
 }
 
 /* ── Render ── */
-const PHASE_LABELS = {prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
-const PHASE_CLASS  = {prover:'phase-prover',design:'phase-design',prefab:'phase-prefab',active:'phase-active',complete:'phase-complete'};
+const PHASE_LABELS = {notstarted:'Not Started',prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
+const PHASE_CLASS  = {notstarted:'phase-notstarted',prover:'phase-prover',design:'phase-design',prefab:'phase-prefab',active:'phase-active',complete:'phase-complete'};
 
 function setFilter(f, el){
   currentFilter = f;
@@ -262,7 +264,13 @@ function setFilter(f, el){
 }
 
 function render(){
-  const filtered = currentFilter === 'all' ? projects : projects.filter(p => p.phase === currentFilter);
+  const filtered = (currentFilter === 'all' ? projects : projects.filter(p => p.phase === currentFilter))
+    .slice().sort((a,b)=>{
+      const n1=parseFloat((a.num||'').replace(/[^0-9.]/g,''))||0;
+      const n2=parseFloat((b.num||'').replace(/[^0-9.]/g,''))||0;
+      if(n1!==n2)return n1-n2;
+      return (a.num||'').localeCompare(b.num||'');
+    });
   const active = projects.filter(p => p.phase !== 'complete').length;
   const completed = projects.filter(p => p.phase === 'complete').length;
   const openTasks = projects.reduce((s,p)=>{
