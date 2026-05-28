@@ -3,429 +3,1337 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RidgeHub — Projects</title>
+<title>RidgeHub — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#f0f4f8;--surface:#fff;--surface2:#eef2f7;--surface3:#dde6f0;
+  --bg:#f0f4f8;--surface:#ffffff;--surface2:#eef2f7;--surface3:#dde6f0;
   --border:rgba(30,80,160,0.08);--border2:rgba(30,80,160,0.15);
   --accent:#1a5fb4;--accent2:#3584e4;--accent3:#4a90d9;
   --text:#1a2540;--text2:#4a6080;--text3:#8aaac8;
   --green:#1a7a4e;--green-bg:rgba(26,122,78,0.08);
   --yellow:#8a6200;--yellow-bg:rgba(240,192,64,0.1);
+  --blue:#1a5fb4;--blue-bg:rgba(26,95,180,0.08);
   --red:#c03020;--red-bg:rgba(192,48,32,0.08);
+  --purple:#6b2fa0;--purple-bg:rgba(107,47,160,0.08);
+  --orange-light:#eef4ff;--orange-mid:#d0e4ff;
   --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
-  --radius:12px;--shadow:0 2px 8px rgba(30,80,160,0.08);--shadow-lg:0 8px 32px rgba(30,80,160,0.12);
+  --radius:12px;--card-radius:10px;
+  --shadow:0 2px 8px rgba(30,80,160,0.08);
+  --shadow-lg:0 8px 32px rgba(30,80,160,0.12);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(52,132,228,0.06) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(26,95,180,0.04) 0%,transparent 50%);pointer-events:none;z-index:0}
-.app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
 
-.site-header{padding:.875rem 1.5rem;background:linear-gradient(135deg,#1a5fb4,#3584e4);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 12px rgba(20,60,140,0.25)}
+/* ── Header ── */
+.site-header{padding:.75rem 1.25rem;background:linear-gradient(135deg,#1a5fb4,#3584e4);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(20,60,140,0.25)}
 .header-left{display:flex;align-items:center;gap:10px}
-.logo-mark{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;font-weight:600;color:#fff;text-decoration:none;flex-shrink:0}
+.logo-mark{width:32px;height:32px;border-radius:7px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500;color:#fff;text-decoration:none;flex-shrink:0;transition:background 0.15s}
 .logo-mark:hover{background:rgba(255,255,255,0.3)}
-.header-title{font-size:22px;font-weight:700;color:#fff}
-.header-sub{font-size:13px;color:rgba(255,255,255,0.7);font-family:var(--mono)}
-.btn{background:none;border:1px solid var(--border2);border-radius:8px;padding:8px 16px;font-size:14px;color:var(--text2);cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{background:var(--surface2);color:var(--accent);border-color:var(--accent)}
-.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-.btn-primary:hover{background:#1550a0;border-color:#1550a0;color:#fff}
-.btn-hdr{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:7px;padding:7px 14px;font-size:13px;color:#fff;cursor:pointer;font-family:var(--sans);transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.header-title{font-size:17px;font-weight:700;color:#fff}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.7);font-family:var(--mono)}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.time-display{font-family:var(--mono);font-size:14px;color:rgba(255,255,255,0.85);white-space:nowrap}
+.notif-badge{background:#fff;color:var(--accent);font-size:12px;font-family:var(--mono);padding:2px 7px;border-radius:99px;font-weight:700;display:none}
+.btn-hdr{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:7px 14px;font-size:13px;color:#fff;cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all 0.15s}
 .btn-hdr:hover{background:rgba(255,255,255,0.25)}
 
-.content{padding:1.5rem;max-width:960px;margin:0 auto;width:100%;padding-bottom:4rem}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
-.page-title{font-size:28px;font-weight:700;color:var(--text)}
-.page-sub{font-size:14px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+/* ── Quick actions ── */
+.quick-actions{padding:.8rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border2);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:#eef4ff;color:var(--accent);border-color:var(--accent)}
+.btn-primary{background:#1a5fb4;border-color:#1a5fb4;color:#fff;font-weight:500}
+.btn-primary:hover{background:#1550a0;border-color:#1550a0;color:#fff}
+.btn-focus{background:#6b2fa0;border-color:#6b2fa0;color:#fff;font-weight:500}
+.btn-focus:hover{background:#5a2090}
+.btn-sm{padding:6px 12px;font-size:12px}
 
-/* Stats bar */
-.stats-bar{display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
-.stat-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;flex:1;min-width:130px;box-shadow:var(--shadow)}
-.stat-val{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--accent);line-height:1}
-.stat-label{font-size:12px;color:var(--text2);font-family:var(--mono);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em}
+/* ── Grid ── */
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:1.25rem;padding-bottom:80px;position:relative;z-index:1;max-width:1200px;margin:0 auto;width:100%}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid{grid-template-columns:1fr;padding:1rem}}
 
-/* Filters */
-.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.filter-btn{background:var(--surface);border:1px solid var(--border2);border-radius:99px;padding:5px 14px;font-size:13px;color:var(--text2);cursor:pointer;font-family:var(--sans);transition:all 0.15s}
-.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.filter-btn:hover:not(.active){background:var(--surface2);color:var(--accent)}
+/* ── Panel ── */
+.panel{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow)}
+.panel-wide{grid-column:span 2}
+.panel-full{grid-column:1/-1}
+@media(max-width:900px){.panel-wide{grid-column:span 1}.panel-full{grid-column:1/-1}}
+.panel-header{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.panel-header-accent{background:linear-gradient(135deg,#1a5fb4,#3584e4)}
+.panel-header-blue{background:linear-gradient(135deg,#1a5fb4,#3584e4)}
+.panel-header-green{background:linear-gradient(135deg,#1a7a4e,#2a9a6e)}
+.panel-header-purple{background:linear-gradient(135deg,#6b2fa0,#8b4fc0)}
+.panel-header-yellow{background:linear-gradient(135deg,#8a6200,#b08020)}
+.panel-header-teal{background:linear-gradient(135deg,#0e7a7a,#1a9a9a)}
+.panel-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#fff;font-family:var(--mono);display:flex;align-items:center;gap:6px}
+.panel-title-dark{color:var(--text2)}
+.panel-header-actions{display:flex;align-items:center;gap:6px}
+.panel-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:5px;padding:5px 10px;font-size:12px;color:#fff;cursor:pointer;font-family:var(--mono);transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center}
+.panel-btn:hover{background:rgba(255,255,255,0.35)}
+.panel-btn-dark{background:var(--orange-light);border-color:var(--border2);color:var(--accent)}
+.panel-btn-dark:hover{background:var(--orange-mid)}
+.panel-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:320px}
+.panel-body.tall{max-height:420px}
+.panel-body.auto{max-height:none}
 
-/* Project cards */
-.projects-grid{display:flex;flex-direction:column;gap:10px}
-.project-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);transition:all 0.2s;cursor:pointer;text-decoration:none;color:var(--text);display:block}
-.project-card:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
-.project-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-.project-card-left{}
-.project-num{font-family:var(--mono);font-size:12px;color:var(--text3);margin-bottom:3px}
-.project-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
-.project-gc{font-size:13px;color:var(--text2)}
-.project-card-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
-.phase-badge{font-size:12px;font-family:var(--mono);padding:3px 10px;border-radius:99px;font-weight:500;white-space:nowrap}
-.phase-prover{background:rgba(107,47,160,0.1);color:#6b2fa0;border:1px solid rgba(107,47,160,0.2)}
-.phase-design{background:rgba(26,95,180,0.1);color:var(--accent);border:1px solid rgba(26,95,180,0.2)}
-.phase-prefab{background:rgba(232,129,58,0.1);color:#c06010;border:1px solid rgba(232,129,58,0.2)}
-.phase-active{background:rgba(26,122,78,0.1);color:var(--green);border:1px solid rgba(26,122,78,0.2)}
-.phase-complete{background:var(--surface2);color:var(--text3);border:1px solid var(--border2)}
-.project-card-bottom{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.project-meta-item{font-size:12px;color:var(--text3);font-family:var(--mono);display:flex;align-items:center;gap:4px}
-.task-progress-wrap{flex:1;min-width:120px}
-.task-progress-label{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;display:flex;justify-content:space-between}
-.progress-bar{height:5px;background:var(--surface2);border-radius:99px;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.4s}
-.progress-fill.complete{background:var(--green)}
+/* ── Weather ── */
+.weather-wrap{display:flex;align-items:center;gap:14px;padding:10px 14px}
+.weather-temp{font-size:42px;font-weight:300;color:var(--accent);line-height:1;font-family:var(--mono)}
+.weather-info{}
+.weather-desc{font-size:14px;font-weight:500;margin-bottom:2px}
+.weather-sub{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.weather-icon{font-size:36px}
 
-.empty-state{text-align:center;padding:4rem 1rem;color:var(--text3);font-family:var(--mono)}
-.empty-icon{font-size:48px;margin-bottom:16px}
-.empty-title{font-size:16px;margin-bottom:8px;color:var(--text2)}
+/* ── Daily briefing ── */
+.briefing-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:15px;line-height:1.7}
+.briefing-meta{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(10,20,50,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:16px;border:1px solid var(--border2);border-top:3px solid var(--accent);width:100%;max-width:600px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
-.modal-header{padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.modal-title{font-size:18px;font-weight:700;color:var(--accent)}
-.modal-close{background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;padding:0 4px;line-height:1}
-.modal-close:hover{color:var(--text)}
-.modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:14px}
-.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface2);border-radius:0 0 16px 16px}
-.form-row{display:flex;gap:12px}
-.form-row .form-group{flex:1}
-.form-group{display:flex;flex-direction:column;gap:5px}
+/* ── Tasks ── */
+.task-item{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;cursor:grab;transition:background 0.15s}
+.task-item:last-child{border-bottom:none}
+.task-item.dragging{opacity:0.4;cursor:grabbing}
+.task-item.drag-over{background:var(--orange-light);border-radius:6px}
+.task-drag-handle{color:var(--text3);cursor:grab;font-size:18px;padding-top:1px;flex-shrink:0;user-select:none}
+.task-check{width:22px;height:22px;border-radius:5px;border:1.5px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all 0.15s;margin-top:1px}
+.task-check:hover{border-color:var(--green);color:var(--green)}
+.task-info{flex:1;min-width:0}
+.task-name{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-meta{font-size:13px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.task-due{color:var(--red)}
+.task-priority{font-size:11px;padding:2px 8px;border-radius:99px;font-family:var(--mono);flex-shrink:0}
+.pri-high{background:var(--red-bg);color:var(--red)}
+.pri-med{background:var(--yellow-bg);color:var(--yellow)}
+.pri-low{background:var(--green-bg);color:var(--green)}
+.task-timer-btn{background:none;border:1px solid var(--border2);border-radius:5px;padding:5px 10px;font-size:12px;color:var(--text3);cursor:pointer;font-family:var(--mono);flex-shrink:0;transition:all 0.15s;white-space:nowrap}
+.task-timer-btn:hover{border-color:var(--accent);color:var(--accent)}
+.task-timer-btn.running{background:#1a5fb4;border-color:#1a5fb4;color:#fff}
+
+/* ── Timer ── */
+.active-timer-bar{background:linear-gradient(135deg,#1a5fb4,#3584e4);padding:8px 1.25rem;display:none;align-items:center;gap:12px;flex-wrap:wrap}
+.timer-task-name{font-size:14px;font-weight:600;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-display{font-family:var(--mono);font-size:18px;font-weight:500;color:#fff;white-space:nowrap}
+.timer-controls{display:flex;gap:6px}
+.timer-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:5px;padding:6px 12px;font-size:13px;color:#fff;cursor:pointer;font-family:var(--mono)}
+.timer-btn:hover{background:rgba(255,255,255,0.35)}
+.pomodoro-indicator{font-size:12px;color:rgba(255,255,255,0.7);font-family:var(--mono)}
+
+/* ── Calendar ── */
+.cal-nav{display:flex;align-items:center;gap:6px}
+.cal-date-label{font-size:13px;font-family:var(--mono);color:#fff;white-space:nowrap}
+.cal-item{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.cal-item:last-child{border-bottom:none}
+.cal-time{font-family:var(--mono);font-size:14px;color:var(--blue);white-space:nowrap;flex-shrink:0;min-width:52px}
+.cal-info{flex:1;min-width:0}
+.cal-title{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-loc{font-size:12px;color:var(--text3);margin-top:2px}
+.cal-now{color:var(--accent);font-weight:600}
+.cal-soon{color:var(--yellow)}
+/* Week view */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px 14px}
+.week-day{border-radius:6px;padding:4px;background:#eef4ff;border:1px solid var(--border)}
+.week-day-hdr{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--text2);text-align:center;margin-bottom:4px;text-transform:uppercase}
+.week-day-num{font-size:16px;font-weight:700;text-align:center;margin-bottom:4px;color:var(--text)}
+.week-day.today .week-day-num{background:#1a5fb4;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px}
+.week-event{font-size:11px;background:var(--blue-bg);border-left:2px solid var(--blue);padding:2px 4px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--blue)}
+
+/* ── Email ── */
+.email-item{padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;cursor:pointer}
+.email-item:last-child{border-bottom:none}
+.email-header-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
+.email-actions{display:flex;gap:4px;opacity:0;transition:opacity 0.15s;flex-shrink:0}
+.email-item:hover .email-actions{opacity:1}
+.email-action-btn{background:none;border:1px solid var(--border2);border-radius:5px;padding:5px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-decoration:none;font-family:var(--mono);transition:all 0.15s;display:inline-flex;align-items:center}
+.email-action-btn:hover{background:#eef4ff;color:var(--accent);border-color:var(--accent)}
+.email-from{font-weight:600;font-size:13px;color:var(--text2);font-family:var(--mono)}
+.email-subject{font-weight:700;font-size:16px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.email-snippet{font-size:14px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.email-expand-overlay{position:fixed;inset:0;background:rgba(10,20,50,0.7);z-index:300;display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+.email-expand-overlay.open{display:flex}
+.email-expand-modal{background:#fff;border-radius:14px;border:1px solid var(--border2);border-top:3px solid var(--accent);width:100%;max-width:660px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.email-expand-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.email-expand-subject{font-size:18px;font-weight:700;flex:1;line-height:1.4;color:var(--text)}
+.email-expand-meta{padding:.75rem 1.25rem;border-bottom:1px solid var(--border);font-size:14px;color:var(--text2);font-family:var(--mono);display:flex;gap:12px;flex-wrap:wrap;background:var(--surface2)}
+.email-expand-body{padding:1.25rem;overflow-y:auto;flex:1;font-size:16px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
+.email-expand-footer{padding:.75rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface2);border-radius:0 0 14px 14px}
+.email-tag{display:inline-block;font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;margin-top:4px;margin-right:3px}
+.tag-action{background:var(--accent);color:#fff}
+.tag-question{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(240,192,64,0.3)}
+.tag-starred{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(107,47,160,0.2)}
+
+/* ── Reminders ── */
+.reminder-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.reminder-item:last-child{border-bottom:none}
+.reminder-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);cursor:pointer;flex-shrink:0;transition:all 0.15s;display:flex;align-items:center;justify-content:center;font-size:10px}
+.reminder-check:hover{border-color:var(--green)}
+.reminder-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.reminder-text{flex:1;min-width:0}
+.reminder-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.reminder-due{font-size:13px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.reminder-due.overdue{color:var(--red)}
+.reminder-due.today{color:var(--yellow)}
+
+/* ── Notes ── */
+.notes-area{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.7;resize:none;outline:none;min-height:120px}
+.notes-area::placeholder{color:var(--text3)}
+.notes-saved{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+/* ── Prefab ── */
+.prefab-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.prefab-item:last-child{border-bottom:none}
+.prefab-info{flex:1;min-width:0}
+.prefab-name{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prefab-meta{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.prefab-pct{font-family:var(--mono);font-size:13px;color:var(--green);flex-shrink:0;font-weight:600}
+.mini-bar{width:60px;height:5px;background:var(--surface2);border-radius:99px;overflow:hidden;flex-shrink:0}
+.mini-fill{height:100%;background:var(--green);border-radius:99px}
+
+/* ── Focus mode ── */
+.focus-overlay{position:fixed;inset:0;background:#0a1020;z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.focus-overlay.active{display:flex}
+.focus-task{font-size:28px;font-weight:700;color:#fff;text-align:center;margin-bottom:8px;max-width:600px}
+.focus-proj{font-size:14px;color:rgba(100,160,255,0.7);font-family:var(--mono);margin-bottom:2rem;text-align:center}
+.focus-timer{font-size:72px;font-weight:300;color:var(--accent2);font-family:var(--mono);margin-bottom:1.5rem;line-height:1}
+.focus-pomo{font-size:13px;color:rgba(255,255,255,0.5);font-family:var(--mono);margin-bottom:2rem}
+.focus-pomo-dots{display:flex;gap:6px;justify-content:center;margin-bottom:1.5rem}
+.focus-pomo-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2)}
+.focus-pomo-dot.done{background:var(--accent2)}
+.focus-pomo-dot.active{background:#fff}
+.focus-controls{display:flex;gap:12px;margin-bottom:2rem}
+.focus-btn{padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all 0.15s;border:none}
+.focus-start{background:#1a5fb4;color:#fff}
+.focus-start:hover{background:#1550a0}
+.focus-pause{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.focus-pause:hover{background:rgba(255,255,255,0.25)}
+.focus-exit{position:absolute;top:1.5rem;right:1.5rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:6px 14px;font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:var(--sans)}
+.focus-exit:hover{color:#fff}
+.focus-next{font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--mono);text-align:center}
+
+/* ── Empty/loading ── */
+.empty{font-size:13px;color:var(--text3);font-family:var(--mono);text-align:center;padding:1.25rem 0}
+
+/* ── Project cards on dashboard ── */
+.proj-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(30,80,160,0.06);transition:box-shadow 0.2s}
+.proj-card:hover{box-shadow:0 4px 14px rgba(30,80,160,0.12)}
+.proj-card-header{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none}
+.proj-card-header:hover{background:#f8faff}
+.proj-toggle{font-size:13px;color:var(--text3);transition:transform 0.2s;flex-shrink:0}
+.proj-toggle.open{transform:rotate(90deg)}
+.proj-header-info{flex:1;min-width:0}
+.proj-header-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-header-meta{font-size:12px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+.proj-phase-pill{font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:99px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.pill-prover{background:rgba(107,47,160,0.1);color:#6b2fa0;border:1px solid rgba(107,47,160,0.2)}
+.pill-design{background:rgba(26,95,180,0.1);color:#1a5fb4;border:1px solid rgba(26,95,180,0.2)}
+.pill-prefab{background:rgba(232,129,58,0.12);color:#b05010;border:1px solid rgba(232,129,58,0.25)}
+.pill-active{background:rgba(26,122,78,0.1);color:#1a7a4e;border:1px solid rgba(26,122,78,0.2)}
+.pill-complete{background:#f0f4f8;color:#8aaac8;border:1px solid #dde6f0}
+.proj-prog-wrap{width:80px;flex-shrink:0}
+.proj-prog-bar{height:5px;background:#dde6f0;border-radius:99px;overflow:hidden;margin-bottom:3px}
+.proj-prog-fill{height:100%;border-radius:99px;background:#1a5fb4;transition:width 0.4s}
+.proj-prog-fill.done{background:#1a7a4e}
+.proj-prog-label{font-size:10px;color:var(--text3);font-family:var(--mono);text-align:right}
+.proj-body{display:none;border-top:1px solid #eef2f7;padding:14px 16px;background:#fafcff}
+.proj-body.open{display:block}
+.proj-task-group{margin-bottom:10px}
+.proj-task-group-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#8aaac8;font-family:var(--mono);margin-bottom:5px}
+.proj-task-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #eef2f7;font-size:14px}
+.proj-task-item:last-child{border-bottom:none}
+.proj-task-check{width:18px;height:18px;border-radius:4px;border:2px solid #dde6f0;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all 0.15s}
+.proj-task-check:hover{border-color:#1a7a4e;color:#1a7a4e}
+.proj-task-check.done{background:#1a7a4e;border-color:#1a7a4e;color:#fff}
+.proj-task-name{flex:1;color:#1a2540}
+.proj-task-name.done-task{text-decoration:line-through;color:#8aaac8}
+.proj-task-due{font-size:11px;font-family:var(--mono);color:#8aaac8;white-space:nowrap}
+.proj-task-due.overdue{color:#c03020}
+.proj-open-link{font-size:12px;color:#1a5fb4;text-decoration:none;font-family:var(--mono);display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:4px 10px;border:1px solid rgba(26,95,180,0.2);border-radius:5px;background:rgba(26,95,180,0.05)}
+.proj-open-link:hover{background:rgba(26,95,180,0.1)}
+.proj-info-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:13px}
+.proj-info-item{color:#4a6080;font-family:var(--mono)}
+.proj-info-item span{color:#1a2540;font-weight:500}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Modals ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,50,0.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal{background:#fff;border-radius:14px;border:1px solid var(--border2);border-top:3px solid var(--accent);width:100%;max-width:520px;padding:1.5rem;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:1.25rem;color:var(--accent)}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .form-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);font-family:var(--mono)}
-input[type=text],input[type=date],input[type=number],select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:15px;font-family:var(--sans);color:var(--text);outline:none;width:100%;transition:border-color 0.15s}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff}
+input[type=text],input[type=date],input[type=datetime-local],input[type=password],select,textarea{background:#eef4ff;border:1px solid var(--border2);border-radius:6px;padding:12px 14px;font-size:15px;font-family:var(--sans);color:var(--text);outline:none;width:100%;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 input::placeholder,textarea::placeholder{color:var(--text3)}
-textarea{resize:vertical;min-height:80px}
-.section-divider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);padding:4px 0;border-bottom:1px solid var(--border);margin-top:4px}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-actions .btn{flex:1;justify-content:center;padding:11px;font-size:14px}
+.info-box{background:#eef4ff;border:1px solid var(--border2);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.checkbox-row input{width:auto;cursor:pointer;accent-color:var(--accent)}
+.auth-notice{font-size:11px;color:#fff;font-family:var(--mono);padding:3px 8px;background:rgba(255,255,255,0.2);border-radius:5px;cursor:pointer;border:1px solid rgba(255,255,255,0.3)}
+.auth-notice:hover{background:rgba(255,255,255,0.3)}
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- Focus Mode Overlay -->
+<div class="focus-overlay" id="focusOverlay">
+  <button class="focus-exit" onclick="exitFocus()">✕ Exit Focus</button>
+  <div class="focus-task" id="focusTaskName">Select a task to focus</div>
+  <div class="focus-proj" id="focusProjName"></div>
+  <div class="focus-timer" id="focusTimerDisplay">25:00</div>
+  <div class="focus-pomo" id="focusPomoLabel">Pomodoro 1 of 4</div>
+  <div class="focus-pomo-dots" id="focusPomoDots"></div>
+  <div class="focus-controls">
+    <button class="focus-btn focus-start" id="focusStartBtn" onclick="toggleFocusTimer()">▶ Start</button>
+    <button class="focus-btn focus-pause" onclick="skipPomodoro()">Skip →</button>
+  </div>
+  <div class="focus-next" id="focusNextLabel"></div>
+</div>
+
+<div class="app" id="mainApp">
+  <!-- Header -->
   <div class="site-header">
     <div class="header-left">
-      <a href="https://ridgehub.github.io/dashboard" class="logo-mark">REI</a>
+      <a href="index.html" class="logo-mark">REI</a>
       <div>
-        <div class="header-title">Projects</div>
+        <div class="header-title">Dashboard</div>
         <div class="header-sub">Ridgeline Electrical Industries</div>
       </div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn-hdr" onclick="window.close()">✕ Close</button>
+    <div class="header-right">
+      <span class="notif-badge" id="notifBadge">0</span>
+      <span class="time-display" id="clockDisplay"></span>
+      <button class="btn-hdr btn-focus" onclick="openFocusMode()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);">⚡ Focus</button>
+      <button class="btn-hdr" onclick="openSettings()">⚙</button>
     </div>
   </div>
 
-  <div class="content">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Active Projects</div>
-        <div class="page-sub" id="lastSync">Loading…</div>
-      </div>
-      <button class="btn btn-primary" onclick="openNewProject()">+ New Project</button>
+  <!-- Active timer bar -->
+  <div class="active-timer-bar" id="activeTimerBar" style="padding:0;"><div style="max-width:1200px;margin:0 auto;width:100%;padding:8px 1.25rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div class="timer-task-name" id="timerTaskName">No task</div>
+    <div class="pomodoro-indicator" id="pomodoroIndicator"></div>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <div class="timer-controls">
+      <button class="timer-btn" onclick="pauseResumeTimer()" id="pauseBtn">⏸</button>
+      <button class="timer-btn" onclick="stopTimer()">■ Stop</button>
+      <button class="timer-btn" onclick="openFocusMode()">⚡</button>
     </div>
+  </div></div>
 
-    <div class="stats-bar" id="statsBar">
-      <div class="stat-card"><div class="stat-val" id="statTotal">—</div><div class="stat-label">Total Projects</div></div>
-      <div class="stat-card"><div class="stat-val" id="statActive">—</div><div class="stat-label">Active</div></div>
-      <div class="stat-card"><div class="stat-val" id="statTasks">—</div><div class="stat-label">Open Tasks</div></div>
-      <div class="stat-card"><div class="stat-val" id="statComplete">—</div><div class="stat-label">Completed</div></div>
-    </div>
+  <!-- Quick actions -->
+  <div class="quick-actions" style="padding:0;"><div style="max-width:1200px;margin:0 auto;width:100%;padding:.8rem 1.25rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <button class="btn btn-primary btn-sm" onclick="openNewTask()">+ Task</button>
+    <button class="btn btn-sm" onclick="openNewReminder()">⏰ Reminder</button>
+    <button class="btn btn-sm" onclick="refreshBriefing()">✦ Briefing</button>
+    <button class="btn btn-sm" onclick="refreshAll()" id="refreshBtn">↺ Refresh</button>
+    <button class="btn btn-sm" onclick="toggleWeekView()" id="weekViewBtn">📅 Week View</button>
+    <a href="log.html" class="btn btn-sm">📋 Daily Log</a>
+  </div></div>
 
-    <div class="filter-bar">
-      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-      <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
-      <button class="filter-btn" onclick="setFilter('notstarted',this)">Not Started</button>
-      <button class="filter-btn" onclick="setFilter('prover',this)">ProVer</button>
-      <button class="filter-btn" onclick="setFilter('prefab',this)">Prefab</button>
-      <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
-    </div>
+  <!-- Grid -->
+  <div class="grid">
 
-    <div class="projects-grid" id="projectsGrid">
-      <div class="empty-state"><div class="empty-icon">🏗️</div><div class="empty-title">Loading projects…</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- New Project Modal -->
-<div class="modal-overlay" id="newProjectModal" onclick="if(event.target===this)closeNewProject()">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">New Project</div>
-      <button class="modal-close" onclick="closeNewProject()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="section-divider">Project Info</div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">Project Number</div><input type="text" id="npNum" placeholder="e.g. 26005"/></div>
-        <div class="form-group" style="flex:2;"><div class="form-label">Project Name</div><input type="text" id="npName" placeholder="e.g. Islamic Life Center"/></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">GC Name</div><input type="text" id="npGC" placeholder="General Contractor"/></div>
-        <div class="form-group"><div class="form-label">GC PM Contact</div><input type="text" id="npGCPM" placeholder="Name · Phone · Email"/></div>
-      </div>
-      <div class="form-group"><div class="form-label">Project Address</div><input type="text" id="npAddr" placeholder="123 Main St, Indianapolis IN"/></div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">Contract Amount</div><input type="text" id="npContract" placeholder="$0.00"/></div>
-        <div class="form-group"><div class="form-label">Phase</div>
-          <select id="npPhase">
-            <option value="notstarted">Not Started</option>
-            <option value="prover">ProVer</option>
-            <option value="design">Design</option>
-            <option value="prefab">Prefab</option>
-            <option value="active">Active / Construction</option>
-            <option value="complete">Complete</option>
-          </select>
+    <!-- Weather + Briefing -->
+    <div class="panel panel-full">
+      <div class="panel-header panel-header-accent">
+        <div class="panel-title">✦ Daily Briefing</div>
+        <div class="panel-header-actions">
+          <div id="briefingTime" style="font-size:10px;color:rgba(255,255,255,0.7);font-family:var(--mono);"></div>
+          <div id="weatherInline" style="font-size:12px;color:#fff;font-family:var(--mono);margin-left:8px;"></div>
         </div>
       </div>
-
-      <div class="section-divider">Key Dates</div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">ProVer Date</div><input type="date" id="npProVerDate"/></div>
-        <div class="form-group"><div class="form-label">Job Hand Off Date</div><input type="date" id="npHandOff"/></div>
-        <div class="form-group"><div class="form-label">As-Builts Due</div><input type="date" id="npAsBuilts"/></div>
+      <div class="panel-body auto" id="briefingBody" style="padding:12px 14px;">
+        <div class="empty"><span class="spin">⟳</span> Building briefing…</div>
       </div>
-
-      <div class="section-divider">Electrical Specs</div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">Device Color</div><input type="text" id="npDevColor" placeholder="e.g. White"/></div>
-        <div class="form-group"><div class="form-label">Wall Plate Color</div><input type="text" id="npPlateColor" placeholder="e.g. White"/></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">In-Wall Wiring Method</div><input type="text" id="npInWall" placeholder="e.g. MC Cable"/></div>
-        <div class="form-group"><div class="form-label">Overhead Wiring Method</div><input type="text" id="npOverhead" placeholder="e.g. EMT"/></div>
-      </div>
-      <div class="form-group"><div class="form-label">Special Notes</div><textarea id="npNotes" placeholder="Any special requirements, scope notes…"></textarea></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeNewProject()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveNewProject()">Create Project & Generate Tasks</button>
+
+    <!-- Today tasks -->
+    <div class="panel">
+      <div class="panel-header panel-header-blue">
+        <div class="panel-title">⚡ Today / In Progress</div>
+        <div class="panel-header-actions">
+          <a href="https://ridgehub.github.io/Tasks" target="_blank" class="panel-btn">Open →</a>
+        </div>
+      </div>
+      <div class="panel-body" id="tasksBody"><div class="empty"><span class="spin">⟳</span></div></div>
+    </div>
+
+    <!-- This week tasks -->
+    <div class="panel">
+      <div class="panel-header" style="background:linear-gradient(135deg,#1a6fa0,#2a90c0);">
+        <div class="panel-title">📅 This Week</div>
+        <div class="panel-header-actions">
+          <a href="https://ridgehub.github.io/Tasks" target="_blank" class="panel-btn">Open →</a>
+        </div>
+      </div>
+      <div class="panel-body" id="weekTasksBody"><div class="empty"><span class="spin">⟳</span></div></div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="panel">
+      <div class="panel-header panel-header-teal">
+        <div class="panel-title" id="calTitle">📅 Calendar</div>
+        <div class="panel-header-actions">
+          <button class="panel-btn" onclick="calNav(-1)">‹</button>
+          <button class="panel-btn" onclick="calNav(0)">Today</button>
+          <button class="panel-btn" onclick="calNav(1)">›</button>
+          <span id="calAuthNotice" class="auth-notice" onclick="connectGoogle()" style="display:none;">Connect</span>
+        </div>
+      </div>
+      <div class="panel-body" id="calBody"><div class="empty"><span class="spin">⟳</span></div></div>
+    </div>
+
+    <!-- Reminders -->
+    <div class="panel">
+      <div class="panel-header panel-header-yellow">
+        <div class="panel-title">⏰ Reminders</div>
+      </div>
+      <div class="panel-body" id="remindersBody"><div class="empty">No reminders</div></div>
+    </div>
+
+    <!-- Email -->
+    <div class="panel panel-wide">
+      <div class="panel-header panel-header-accent">
+        <div class="panel-title">✉ Emails Needing Action</div>
+        <div class="panel-header-actions">
+          <span id="gmailAuthNotice" class="auth-notice" onclick="connectGoogle()" style="display:none;">Connect Gmail</span>
+        </div>
+      </div>
+      <div class="panel-body tall" id="emailBody"><div class="empty"><span class="spin">⟳</span></div></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="panel">
+      <div class="panel-header panel-header-green">
+        <div class="panel-title">📝 Pinned Notes</div>
+        <span id="notesSaved" class="notes-saved" style="color:rgba(255,255,255,0.6);"></span>
+      </div>
+      <div class="panel-body auto" style="padding:10px 14px;">
+        <textarea class="notes-area" id="notesArea" placeholder="Quick notes…"></textarea>
+      </div>
+    </div>
+
+    <!-- Prefab -->
+    <div class="panel panel-wide">
+      <div class="panel-header panel-header-accent" style="background:linear-gradient(135deg,#2a4a8a,#1a5fb4);">
+        <div class="panel-title">📦 Prefab Projects</div>
+        <div class="panel-header-actions">
+          <a href="https://ridgehub.github.io/Prefab" target="_blank" class="panel-btn">Open →</a>
+        </div>
+      </div>
+      <div class="panel-body" id="prefabBody"><div class="empty"><span class="spin">⟳</span></div></div>
+    </div>
+
+    <!-- Active Projects -->
+    <div class="panel panel-full">
+      <div class="panel-header" style="background:linear-gradient(135deg,#1a3a6a,#1a5fb4);">
+        <div class="panel-title">🏗️ Active Projects</div>
+        <div class="panel-header-actions">
+          <a href="https://ridgehub.github.io/Projects" target="_blank" class="panel-btn">All Projects →</a>
+        </div>
+      </div>
+      <div class="panel-body auto" id="activeProjectsBody" style="padding:10px 14px;gap:8px;">
+        <div class="empty"><span class="spin">⟳</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Week view modal -->
+  <div class="modal-overlay" id="weekModal" style="display:none;" onclick="if(event.target===this)closeWeekView()">
+    <div class="modal" style="max-width:900px;">
+      <div class="modal-title">Week View</div>
+      <div id="weekGrid" class="week-grid"></div>
+      <div class="modal-actions" style="margin-top:12px;">
+        <button class="btn" onclick="closeWeekView()">Close</button>
+      </div>
     </div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Email expand modal -->
+<div class="email-expand-overlay" id="emailExpandOverlay" onclick="if(event.target===this)closeEmailExpand()">
+  <div class="email-expand-modal">
+    <div class="email-expand-header">
+      <div class="email-expand-subject" id="expandSubject"></div>
+      <button onclick="closeEmailExpand()" style="background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;flex-shrink:0;padding:0 4px;">✕</button>
+    </div>
+    <div class="email-expand-meta" id="expandMeta"></div>
+    <div class="email-expand-body" id="expandBody"></div>
+    <div class="email-expand-footer">
+      <a id="expandGmailLink" href="#" target="_blank" class="btn btn-primary btn-sm">↗ Open in Gmail</a>
+      <button onclick="dismissEmailFromExpand()" class="btn btn-sm">✕ Dismiss</button>
+      <button onclick="closeEmailExpand()" class="btn btn-sm">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsModal" style="display:none;" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="modal-title">Settings</div>
+    <div class="form-group"><div class="form-label">GitHub Token</div><input type="password" id="ghTokenInput" placeholder="ghp_…"/></div>
+    <div class="info-box">Google Calendar & Gmail connect via the Connect button in each panel.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeSettings()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- New task modal -->
+<div class="modal-overlay" id="newTaskModal" style="display:none;" onclick="if(event.target===this)closeNewTask()">
+  <div class="modal">
+    <div class="modal-title">New Task</div>
+    <div class="form-group"><div class="form-label">Column</div>
+      <select id="ntCol">
+        <option value="tasks">Tasks</option>
+        <option value="due">Tasks w/ Due Dates</option>
+        <option value="week">This Week</option>
+        <option value="today" selected>Today / In Progress</option>
+        <option value="waiting">Waiting</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <div class="form-group" style="flex:1;"><div class="form-label">Project #</div><input type="text" id="ntProj" placeholder="2024-041"/></div>
+      <div class="form-group" style="flex:2;"><div class="form-label">Project Name</div><input type="text" id="ntName" placeholder="e.g. Chernoff Cosmetic"/></div>
+    </div>
+    <div class="form-group"><div class="form-label">Main Task</div><textarea id="ntTask" placeholder="Describe the task…" style="min-height:70px;"></textarea></div>
+    <div style="display:flex;gap:10px;">
+      <div class="form-group" style="flex:1;"><div class="form-label">Priority</div>
+        <select id="ntPriority"><option value="">None</option><option value="high">🔴 High</option><option value="med">🟠 Medium</option><option value="low">🟢 Low</option></select>
+      </div>
+      <div class="form-group" style="flex:1;"><div class="form-label">Due Date</div><input type="date" id="ntDue"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeNewTask()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- New reminder modal -->
+<div class="modal-overlay" id="newReminderModal" style="display:none;" onclick="if(event.target===this)closeNewReminder()">
+  <div class="modal">
+    <div class="modal-title">New Reminder</div>
+    <div class="form-group"><div class="form-label">Reminder</div><input type="text" id="nrText" placeholder="e.g. Follow up on RFI #4"/></div>
+    <div class="form-group"><div class="form-label">Due Date & Time</div><input type="datetime-local" id="nrDue"/></div>
+    <div class="form-group"><label class="checkbox-row"><input type="checkbox" id="nrAddCal"/> Add to Google Calendar</label></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeNewReminder()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewReminder()">Save Reminder</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const REPO     = 'RidgeHub/Projects';
-const FILE     = 'projects.json';
-const API      = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
-const RAW      = `https://raw.githubusercontent.com/${REPO}/main/${FILE}`;
-const TASKS_REPO = 'RidgeHub/Tasks';
-const TASKS_FILE = 'tasks.json';
-const TASKS_API  = `https://api.github.com/repos/${TASKS_REPO}/contents/${TASKS_FILE}`;
+/* ── Config ── */
+const TASKS_REPO  = 'RidgeHub/Tasks';
+const TASKS_FILE  = 'tasks.json';
+const TASKS_API   = 'https://api.github.com/repos/RidgeHub/Tasks/contents/tasks.json';
+const TASKS_RAW   = 'https://raw.githubusercontent.com/RidgeHub/Tasks/main/tasks.json';
+const PREFAB_RAW  = 'https://raw.githubusercontent.com/RidgeHub/Prefab/main/prefab-projects.json';
+const DASH_KEY    = 'ridgehub_dashboard_v2';
+const GCAL_CLIENT  = '967630255564-bdnrkm82rjd2r9m38relv62rnn00i12b.apps.googleusercontent.com';
+const WORKER_URL   = 'https://ridgehub-auth.jamesm-c96.workers.dev/';
+const GCAL_SCOPE  = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly';
+const REDIRECT    = window.location.origin + window.location.pathname;
+const INDY_LAT    = 39.7684;
+const INDY_LON    = -86.1581;
 
-let projects = [], fileSha = null, currentFilter = 'all';
+let googleToken = null, reminders = [], taskOrder = [];
+let calOffset = 0, weekEvents = {};
 
-function getGHToken(){ return localStorage.getItem('dash_gh_token') || ''; }
+/* ── Timer state ── */
+let timerInterval = null, timerSeconds = 0, timerRunning = false;
+let timerTaskId = null, timerTaskName = '', timerTaskProj = '';
+let pomodoroMode = false, pomodoroPhase = 'work', pomodoroCount = 0;
+const POMO_WORK = 25*60, POMO_BREAK = 5*60, POMO_LONG = 15*60;
+let focusTimerInterval = null;
+
+function getGHToken(){ return localStorage.getItem('dash_gh_token')||''; }
+function loadLocal(){
+  try{ const d=JSON.parse(localStorage.getItem(DASH_KEY)||'{}'); reminders=d.reminders||[]; taskOrder=d.taskOrder||[]; }
+  catch(e){ reminders=[]; taskOrder=[]; }
+}
+function saveLocal(){ localStorage.setItem(DASH_KEY,JSON.stringify({reminders,taskOrder})); }
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function genId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
-function fmt(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
 
-/* ── Load projects ── */
-async function loadProjects(){
-  try{
-    const token = getGHToken();
-    const meta = await fetch(API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
-    if(meta.status === 404){ projects = []; fileSha = null; render(); return; }
-    if(!meta.ok) throw new Error('HTTP ' + meta.status);
-    const d = await meta.json();
-    fileSha = d.sha;
-    projects = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-    document.getElementById('lastSync').textContent = 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    render();
-  }catch(e){
-    document.getElementById('projectsGrid').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Could not load projects</div><div>${esc(e.message)}</div></div>`;
+/* ── Clock ── */
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clockDisplay').textContent=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true})+' · '+now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+
+/* ── Google OAuth (Authorization Code Flow) ── */
+function connectGoogle(){
+  // Generate and store a state param to prevent CSRF
+  const state = crypto.randomUUID();
+  localStorage.setItem('oauth_state', state);
+  const p = new URLSearchParams({
+    client_id: GCAL_CLIENT,
+    redirect_uri: WORKER_URL + 'callback',
+    response_type: 'code',
+    scope: GCAL_SCOPE,
+    access_type: 'offline',
+    prompt: 'consent',
+    state,
+  });
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${p}`;
+}
+
+function checkOAuthReturn(){
+  // Handle code flow — Worker redirects back with ?session_id=... and ?access_token=...
+  const p = new URLSearchParams(window.location.search);
+  const sessionId = p.get('session_id');
+  const accessToken = p.get('access_token');
+  const expiresIn = p.get('expires_in');
+  if(sessionId && accessToken){
+    googleToken = accessToken;
+    localStorage.setItem('dash_google_token', accessToken);
+    localStorage.setItem('dash_google_session', sessionId);
+    const expiry = Date.now() + (parseInt(expiresIn||3600) - 60) * 1000;
+    localStorage.setItem('dash_google_expiry', expiry);
+    history.replaceState(null, '', window.location.pathname);
+    document.getElementById('calAuthNotice').style.display = 'none';
+    document.getElementById('gmailAuthNotice').style.display = 'none';
   }
 }
 
-async function saveProjects(){
-  const token = getGHToken();
-  if(!token){ alert('Enter your GitHub token on the dashboard first.'); return; }
-  const body = { message:'Update projects', content: btoa(unescape(encodeURIComponent(JSON.stringify(projects,null,2)))) };
-  if(fileSha) body.sha = fileSha;
-  const res = await fetch(API, {method:'PUT', headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'}, body:JSON.stringify(body)});
-  if(!res.ok) throw new Error('Save failed: HTTP ' + res.status);
-  fileSha = (await res.json()).content.sha;
-}
-
-/* ── Render ── */
-const PHASE_LABELS = {notstarted:'Not Started',prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
-const PHASE_CLASS  = {notstarted:'phase-notstarted',prover:'phase-prover',design:'phase-design',prefab:'phase-prefab',active:'phase-active',complete:'phase-complete'};
-
-function setFilter(f, el){
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  render();
-}
-
-function render(){
-  const filtered = (currentFilter === 'all' ? projects : projects.filter(p => p.phase === currentFilter))
-    .slice().sort((a,b)=>{
-      const n1=parseFloat((a.num||'').replace(/[^0-9.]/g,''))||0;
-      const n2=parseFloat((b.num||'').replace(/[^0-9.]/g,''))||0;
-      if(n1!==n2)return n1-n2;
-      return (a.num||'').localeCompare(b.num||'');
-    });
-  const active = projects.filter(p => p.phase !== 'complete').length;
-  const completed = projects.filter(p => p.phase === 'complete').length;
-  const openTasks = projects.reduce((s,p)=>{
-    const tasks = p.tasks||[];
-    return s + tasks.filter(t=>!t.done).length;
-  },0);
-  document.getElementById('statTotal').textContent = projects.length;
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statTasks').textContent = openTasks;
-  document.getElementById('statComplete').textContent = completed;
-
-  const grid = document.getElementById('projectsGrid');
-  if(!filtered.length){
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🏗️</div><div class="empty-title">No projects found</div><div>Create your first project with the button above.</div></div>`;
+async function silentRefresh(){
+  const expiry = parseInt(localStorage.getItem('dash_google_expiry')||'0');
+  // Token still valid — nothing to do
+  if(expiry && Date.now() < expiry){
+    googleToken = googleToken || localStorage.getItem('dash_google_token');
     return;
   }
-
-  grid.innerHTML = filtered.map(p => {
-    const tasks = p.tasks||[];
-    const done = tasks.filter(t=>t.done).length;
-    const total = tasks.length;
-    const pct = total ? Math.round((done/total)*100) : 0;
-    const phaseLabel = PHASE_LABELS[p.phase]||p.phase||'Active';
-    const phaseClass = PHASE_CLASS[p.phase]||'phase-active';
-    return `<a class="project-card" href="project.html?id=${p.id}">
-      <div class="project-card-top">
-        <div class="project-card-left">
-          <div class="project-num">${p.num?'#'+esc(p.num):''}</div>
-          <div class="project-name">${esc(p.name)}</div>
-          <div class="project-gc">${p.gc?esc(p.gc):''}</div>
-        </div>
-        <div class="project-card-right">
-          <span class="phase-badge ${phaseClass}">${phaseLabel}</span>
-          ${p.proVerDate?`<span style="font-size:11px;color:var(--text3);font-family:var(--mono);">ProVer: ${fmt(p.proVerDate)}</span>`:''}
-        </div>
-      </div>
-      <div class="project-card-bottom">
-        ${p.addr?`<span class="project-meta-item">📍 ${esc(p.addr)}</span>`:''}
-        ${p.inWall?`<span class="project-meta-item">⚡ ${esc(p.inWall)}</span>`:''}
-        <div class="task-progress-wrap">
-          <div class="task-progress-label"><span>Tasks</span><span>${done}/${total}</span></div>
-          <div class="progress-bar"><div class="progress-fill ${pct===100?'complete':''}" style="width:${pct}%"></div></div>
-        </div>
-      </div>
-    </a>`;
-  }).join('');
-}
-
-/* ── New project ── */
-function openNewProject(){
-  ['npNum','npName','npGC','npGCPM','npAddr','npContract','npDevColor','npPlateColor','npInWall','npOverhead','npNotes','npProVerDate','npHandOff','npAsBuilts'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('npPhase').value = 'prover';
-  document.getElementById('newProjectModal').classList.add('open');
-  setTimeout(()=>document.getElementById('npName').focus(), 100);
-}
-function closeNewProject(){ document.getElementById('newProjectModal').classList.remove('open'); }
-
-/* ── Task template ── */
-const TASK_TEMPLATE = [
-  {group:'ProVer', tasks:['Review Prints & Specs','Review Accubid Estimate','ProVer Meeting','Talk About Design Changes']},
-  {group:'Accubid', tasks:['Estimate Clean','Create Project']},
-  {group:'Design', tasks:['Label Estimated Designs','Upload Designs to Bluebeam','Print Designs','Talk to Foreman about Design Revisions','Make Revisions','Upload Revisions to Bluebeam','Print Design Revisions']},
-  {group:'Print', tasks:['Print Full Set 11x17 Drawings','Print Essential 24x36 Drawings']},
-  {group:'SitePrint', tasks:['Obtain CAD Files','Prepare CADs For Printing']},
-  {group:'Prefab', tasks:['Label Print for Prefab','Add Prefab Codes to Labels','Upload to Assembly Creator','Upload to Drive','Upload to Prefab Board','Print Labels','Get MC Cable Amounts']},
-  {group:'As-Builts', tasks:['Talk to Foreman About Changes','Create As-Builts','Email to Amber']},
-];
-
-function generateTasks(projectId, projectNum, projectName, proVerDate, handOffDate, asBuiltsDate){
-  const tasks = [];
-  const now = Date.now();
-  TASK_TEMPLATE.forEach(group => {
-    group.tasks.forEach((taskName, i) => {
-      let due = null;
-      // Assign due dates to key tasks
-      if(group.group === 'ProVer' && proVerDate) due = proVerDate;
-      if(group.group === 'As-Builts' && taskName === 'Email to Amber' && asBuiltsDate) due = asBuiltsDate;
-      tasks.push({
-        id: genId(),
-        projectId,
-        col: due ? 'due' : 'tasks',
-        proj: projectNum,
-        name: projectName,
-        task: `[${group.group}] ${taskName}`,
-        group: group.group,
-        priority: '',
-        due: due || '',
-        subtasks: [],
-        taskDone: false,
-        done: false,
-        createdAt: now + i,
-        movedAt: now + i,
+  // Try to refresh using session ID stored in KV via Worker
+  const sessionId = localStorage.getItem('dash_google_session');
+  if(sessionId){
+    try{
+      const res = await fetch(WORKER_URL + 'refresh', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({session_id: sessionId}),
       });
+      if(res.ok){
+        const data = await res.json();
+        if(data.access_token){
+          googleToken = data.access_token;
+          localStorage.setItem('dash_google_token', data.access_token);
+          const newExpiry = Date.now() + (parseInt(data.expires_in||3600) - 60) * 1000;
+          localStorage.setItem('dash_google_expiry', newExpiry);
+          document.getElementById('calAuthNotice').style.display = 'none';
+          document.getElementById('gmailAuthNotice').style.display = 'none';
+          return;
+        }
+      } else if(res.status === 401){
+        // Session expired from KV — need to reconnect
+        localStorage.removeItem('dash_google_session');
+      }
+    }catch(e){ console.warn('Silent refresh failed:', e); }
+  }
+  // No valid session — show reconnect
+  googleToken = null;
+  localStorage.removeItem('dash_google_token');
+  localStorage.removeItem('dash_google_expiry');
+  document.getElementById('calAuthNotice').style.display = '';
+  document.getElementById('gmailAuthNotice').style.display = '';
+}
+
+/* ── Badge ── */
+function updateBadge(n){
+  const b=document.getElementById('notifBadge');
+  if(n>0){b.style.display='';b.textContent=n;}else b.style.display='none';
+}
+
+/* ── Weather ── */
+async function loadWeather(){
+  try{
+    const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${INDY_LAT}&longitude=${INDY_LON}&current_weather=true&temperature_unit=fahrenheit`);
+    if(!res.ok)return;
+    const d=await res.json();
+    const temp=Math.round(d.current_weather.temperature);
+    const code=d.current_weather.weathercode;
+    const icon=code<=1?'☀️':code<=3?'⛅':code<=67?'🌧️':code<=77?'🌨️':'⛈️';
+    document.getElementById('weatherInline').textContent=`${icon} ${temp}°F · Indianapolis`;
+  }catch(e){}
+}
+
+/* ── Tasks ── */
+let cachedCards = [];
+async function loadTasks(){
+  const el=document.getElementById('tasksBody');
+  const weekEl=document.getElementById('weekTasksBody');
+  try{
+    const res=await fetch(TASKS_RAW+'?v='+Date.now());
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const d=await res.json();
+    cachedCards=d.cards||[];
+    if(!Array.isArray(cachedCards))cachedCards=[];
+
+    // Today / In Progress — all tasks in 'today' column regardless of priority
+    const todayCards=cachedCards.filter(c=>c.col==='today');
+    // Apply saved order
+    if(taskOrder.length){
+      todayCards.sort((a,b)=>{
+        const ai=taskOrder.indexOf(a.id),bi=taskOrder.indexOf(b.id);
+        if(ai===-1&&bi===-1)return 0;if(ai===-1)return 1;if(bi===-1)return -1;return ai-bi;
+      });
+    }
+
+    // This week — 'week' and 'due' columns
+    const weekCards=cachedCards.filter(c=>c.col==='week'||c.col==='due');
+
+    const renderCard=(c)=>{
+      const dueStr=c.due?new Date(c.due+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+      const overdue=c.due&&new Date(c.due+'T00:00:00')<new Date();
+      const priHTML=c.priority?`<span class="task-priority pri-${c.priority}">${c.priority}</span>`:'';
+      const isRunning=timerTaskId===c.id;
+      return `<div class="task-item" id="task-${c.id}" draggable="true" data-id="${c.id}">
+        <div class="task-drag-handle" title="Drag">⠿</div>
+        <div class="task-check" onclick="completeTask('${c.id}')" title="Mark done">✓</div>
+        <div class="task-info">
+          <div class="task-name">${esc(c.name||c.task||'Untitled')}</div>
+          <div class="task-meta">${c.proj?'#'+esc(c.proj)+' · ':''}${dueStr?`<span class="${overdue?'task-due':''}">${overdue?'⚠ ':''} ${dueStr}</span>`:''}</div>
+        </div>
+        ${priHTML}
+        <button class="task-timer-btn ${isRunning?'running':''}" onclick="startTimer('${c.id}','${esc(c.name||c.task||'Task')}','${esc(c.proj||'')}')" title="${isRunning?'Running':'Start timer'}">
+          ${isRunning?'⏱ '+formatTime(timerSeconds):'▶'}
+        </button>
+      </div>`;
+    };
+
+    // Render today panel
+    if(!todayCards.length){
+      el.innerHTML='<div class="empty">No tasks in progress</div>';
+    } else {
+      el.innerHTML=todayCards.map(renderCard).join('');
+      attachDragListeners();
+    }
+
+    // Render week panel
+    if(weekEl){
+      if(!weekCards.length){
+        weekEl.innerHTML='<div class="empty">No upcoming tasks this week</div>';
+      } else {
+        weekEl.innerHTML=weekCards.map(renderCard).join('');
+      }
+    }
+
+    const urgent=todayCards.filter(c=>c.due&&new Date(c.due+'T00:00:00')<new Date()).length;
+    return urgent;
+  }catch(e){
+    el.innerHTML=`<div class="empty">Could not load tasks<br><span style="font-size:10px;">${esc(e.message)}</span></div>`;
+    if(weekEl)weekEl.innerHTML='<div class="empty">Could not load</div>';
+    return 0;
+  }
+}
+
+/* ── Drag to reorder ── */
+let dragId=null;
+function attachDragListeners(){
+  document.querySelectorAll('.task-item').forEach(el=>{
+    el.addEventListener('dragstart',e=>{dragId=el.dataset.id;setTimeout(()=>el.classList.add('dragging'),0);e.dataTransfer.effectAllowed='move';});
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.task-item').forEach(x=>x.classList.remove('drag-over'));});
+    el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('drag-over');});
+    el.addEventListener('dragleave',()=>el.classList.remove('drag-over'));
+    el.addEventListener('drop',e=>{
+      e.preventDefault();el.classList.remove('drag-over');
+      if(!dragId||dragId===el.dataset.id)return;
+      // Reorder taskOrder
+      const items=[...document.querySelectorAll('.task-item')].map(x=>x.dataset.id);
+      const from=items.indexOf(dragId),to=items.indexOf(el.dataset.id);
+      if(from===-1||to===-1)return;
+      items.splice(from,1);items.splice(to,0,dragId);
+      taskOrder=items;saveLocal();loadTasks();
     });
   });
-  return tasks;
 }
 
-async function saveNewProject(){
-  const name = document.getElementById('npName').value.trim();
-  const num  = document.getElementById('npNum').value.trim();
-  if(!name){ alert('Enter a project name.'); return; }
-  const token = getGHToken();
-  if(!token){ alert('Enter your GitHub token on the dashboard first.'); return; }
+/* ── Timer ── */
+function formatTime(s){ const m=Math.floor(s/60),sec=s%60; return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
 
-  const proVerDate = document.getElementById('npProVerDate').value;
-  const handOffDate = document.getElementById('npHandOff').value;
-  const asBuiltsDate = document.getElementById('npAsBuilts').value;
+function startTimer(id,name,proj){
+  if(timerTaskId===id){ pauseResumeTimer(); return; }
+  if(timerRunning) stopTimer();
+  timerTaskId=id; timerTaskName=name; timerTaskProj=proj;
+  timerSeconds=0; timerRunning=true;
+  document.getElementById('timerTaskName').textContent=name+(proj?' · #'+proj:'');
+  document.getElementById('activeTimerBar').style.display='flex';
+  document.getElementById('pauseBtn').textContent='⏸';
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{ if(timerRunning){ timerSeconds++; updateTimerDisplay(); } },1000);
+  loadTasks();
+}
+function pauseResumeTimer(){
+  timerRunning=!timerRunning;
+  document.getElementById('pauseBtn').textContent=timerRunning?'⏸':'▶';
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+  // Log to daily log
+  if(timerTaskId&&timerSeconds>30){
+    logTimerSession(timerTaskName,timerTaskProj,timerSeconds);
+  }
+  timerTaskId=null; timerRunning=false; timerSeconds=0;
+  document.getElementById('activeTimerBar').style.display='none';
+  loadTasks();
+}
+function updateTimerDisplay(){
+  document.getElementById('timerDisplay').textContent=formatTime(timerSeconds);
+  // Update button in task list
+  const btn=document.querySelector(`#task-${timerTaskId} .task-timer-btn`);
+  if(btn){ btn.textContent='⏱ '+formatTime(timerSeconds); btn.classList.add('running'); }
+}
 
-  const project = {
-    id: genId(), name, num,
-    gc: document.getElementById('npGC').value.trim(),
-    gcpm: document.getElementById('npGCPM').value.trim(),
-    addr: document.getElementById('npAddr').value.trim(),
-    contract: document.getElementById('npContract').value.trim(),
-    phase: document.getElementById('npPhase').value,
-    proVerDate, handOffDate, asBuiltsDate,
-    devColor: document.getElementById('npDevColor').value.trim(),
-    plateColor: document.getElementById('npPlateColor').value.trim(),
-    inWall: document.getElementById('npInWall').value.trim(),
-    overhead: document.getElementById('npOverhead').value.trim(),
-    notes: document.getElementById('npNotes').value.trim(),
-    tasks: generateTasks(genId(), num, name, proVerDate, handOffDate, asBuiltsDate),
-    proVerNotes: '', prefabNotes: '',
-    revisions: [], schedule: [], scheduleItems: [],
-    createdAt: Date.now(),
-  };
+function logTimerSession(name,proj,seconds){
+  const logs=JSON.parse(localStorage.getItem('dash_daily_log')||'{}');
+  const today=new Date().toDateString();
+  if(!logs[today]) logs[today]=[];
+  logs[today].push({type:'timer',task:name,proj,seconds,endTime:new Date().toISOString()});
+  localStorage.setItem('dash_daily_log',JSON.stringify(logs));
+}
 
-  // Save project
-  projects.unshift(project);
+/* ── Focus Mode ── */
+let focusTaskId=null,focusTimerSec=POMO_WORK,focusRunning=false,focusPhase='work',focusPomoCount=0;
+let focusInterval=null;
+
+function openFocusMode(){
+  // Use current timer task or first active task
+  const firstTask=document.querySelector('.task-item');
+  if(!focusTaskId&&firstTask){
+    const id=firstTask.dataset.id;
+    const c=cachedCards.find(x=>x.id===id);
+    if(c){ focusTaskId=id; document.getElementById('focusTaskName').textContent=c.name||c.task||'Task'; document.getElementById('focusProjName').textContent=c.proj?'#'+c.proj:''; }
+  } else if(timerTaskId){
+    focusTaskId=timerTaskId;
+    document.getElementById('focusTaskName').textContent=timerTaskName;
+    document.getElementById('focusProjName').textContent=timerTaskProj?'#'+timerTaskProj:'';
+  }
+  focusPhase='work'; focusPomoCount=0; focusTimerSec=POMO_WORK; focusRunning=false;
+  updateFocusDisplay();
+  document.getElementById('focusOverlay').classList.add('active');
+}
+function exitFocus(){ document.getElementById('focusOverlay').classList.remove('active'); if(focusInterval){clearInterval(focusInterval);focusInterval=null;} focusRunning=false; }
+function toggleFocusTimer(){
+  focusRunning=!focusRunning;
+  document.getElementById('focusStartBtn').textContent=focusRunning?'⏸ Pause':'▶ Start';
+  if(focusRunning&&!focusInterval){
+    focusInterval=setInterval(()=>{
+      if(!focusRunning)return;
+      focusTimerSec--;
+      updateFocusDisplay();
+      if(focusTimerSec<=0) advancePomodoro();
+    },1000);
+  }
+}
+function advancePomodoro(){
+  focusPomoCount++;
+  if(focusPhase==='work'){
+    focusPhase=focusPomoCount%4===0?'long':'break';
+    focusTimerSec=focusPomoCount%4===0?POMO_LONG:POMO_BREAK;
+  } else { focusPhase='work'; focusTimerSec=POMO_WORK; }
+  focusRunning=false;
+  document.getElementById('focusStartBtn').textContent='▶ Start';
+  updateFocusDisplay();
+}
+function skipPomodoro(){ advancePomodoro(); }
+function updateFocusDisplay(){
+  document.getElementById('focusTimerDisplay').textContent=formatTime(focusTimerSec);
+  const isWork=focusPhase==='work';
+  document.getElementById('focusPomoLabel').textContent=isWork?`Pomodoro ${Math.floor(focusPomoCount/1)+1} · Focus time`:`${focusPhase==='long'?'Long break':'Short break'} · Rest up`;
+  document.getElementById('focusNextLabel').textContent=isWork?'Take a 5 min break after this session':'Back to work after break';
+  // Dots
+  const dots=document.getElementById('focusPomoDots');
+  dots.innerHTML=[0,1,2,3].map(i=>`<div class="focus-pomo-dot ${i<Math.floor(focusPomoCount/2)?'done':i===Math.floor(focusPomoCount/2)&&isWork?'active':''}"></div>`).join('');
+}
+
+/* ── Calendar ── */
+async function loadCalendar(){
+  const el=document.getElementById('calBody');
+  const notice=document.getElementById('calAuthNotice');
+  const title=document.getElementById('calTitle');
+  if(!googleToken){notice.style.display='';el.innerHTML='<div class="empty">Connect Google Calendar</div>';return 0;}
+  notice.style.display='none';
+  const base=new Date(); base.setHours(0,0,0,0);
+  const day=new Date(base); day.setDate(day.getDate()+calOffset);
+  const next=new Date(day); next.setDate(next.getDate()+1);
+  const isToday=calOffset===0;
+  title.textContent='📅 '+day.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   try{
-    await saveProjects();
-  }catch(e){ alert('Failed to save project: ' + e.message); projects.shift(); return; }
+    const res=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${day.toISOString()}&timeMax=${next.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=20`,{headers:{Authorization:`Bearer ${googleToken}`}});
+    if(res.status===401){googleToken=null;localStorage.removeItem('dash_google_token');notice.style.display='';el.innerHTML='<div class="empty">Session expired</div>';return 0;}
+    if(!res.ok)throw new Error();
+    const data=await res.json(); const events=data.items||[];
+    if(!events.length){el.innerHTML='<div class="empty">No events</div>';return 0;}
+    const now=new Date();
+    el.innerHTML=events.map(ev=>{
+      const start=ev.start?.dateTime?new Date(ev.start.dateTime):null;
+      const timeStr=start?start.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'All day';
+      const isNow=start&&start<=now&&ev.end?.dateTime&&new Date(ev.end.dateTime)>=now;
+      const soonMs=start?start-now:null;
+      const isSoon=soonMs&&soonMs>0&&soonMs<15*60*1000;
+      return `<div class="cal-item">
+        <div class="cal-time ${isNow?'cal-now':''} ${isSoon?'cal-soon':''}">${timeStr}${isSoon?' ⚡':''}</div>
+        <div class="cal-info"><div class="cal-title">${esc(ev.summary||'(No title)')}</div>${ev.location?`<div class="cal-loc">${esc(ev.location)}</div>`:''}</div>
+      </div>`;
+    }).join('');
+    return 0;
+  }catch(e){el.innerHTML='<div class="empty">Could not load calendar</div>';return 0;}
+}
+function calNav(dir){ if(dir===0)calOffset=0;else calOffset+=dir; loadCalendar(); }
 
-  // Add tasks to Tasks board
+/* ── Week View ── */
+async function toggleWeekView(){
+  document.getElementById('weekModal').style.display='flex';
+  if(!googleToken){document.getElementById('weekGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3);font-family:var(--mono);">Connect Google Calendar to see week view</div>';return;}
+  const today=new Date(); today.setHours(0,0,0,0);
+  const mon=new Date(today); mon.setDate(mon.getDate()-((today.getDay()+6)%7));
+  const sun=new Date(mon); sun.setDate(sun.getDate()+7);
   try{
-    const tasksRes = await fetch(TASKS_API, {headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
-    let tasksSha = null, existingCards = [], archived = [];
-    if(tasksRes.ok){
-      const td = await tasksRes.json(); tasksSha = td.sha;
-      const parsed = JSON.parse(atob(td.content.replace(/\n/g,'')));
-      existingCards = parsed.cards || parsed || [];
-      archived = parsed.archived || [];
+    const res=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${mon.toISOString()}&timeMax=${sun.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=50`,{headers:{Authorization:`Bearer ${googleToken}`}});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    const days=[0,1,2,3,4,5,6].map(i=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d;});
+    const grid=document.getElementById('weekGrid');
+    grid.innerHTML=days.map(d=>{
+      const isToday=d.toDateString()===today.toDateString();
+      const dayEvents=(data.items||[]).filter(ev=>{
+        const evDate=new Date(ev.start?.dateTime||ev.start?.date);
+        return evDate.toDateString()===d.toDateString();
+      });
+      return `<div class="week-day ${isToday?'today':''}">
+        <div class="week-day-hdr">${d.toLocaleDateString('en-US',{weekday:'short'})}</div>
+        <div class="week-day-num">${d.getDate()}</div>
+        ${dayEvents.slice(0,4).map(ev=>`<div class="week-event" title="${esc(ev.summary||'')}">${esc(ev.summary||'Event')}</div>`).join('')}
+        ${dayEvents.length>4?`<div style="font-size:9px;color:var(--text3);font-family:var(--mono);text-align:center;">+${dayEvents.length-4} more</div>`:''}
+      </div>`;
+    }).join('');
+  }catch(e){document.getElementById('weekGrid').innerHTML='<div>Could not load week</div>';}
+}
+function closeWeekView(){document.getElementById('weekModal').style.display='none';}
+
+/* ── Email ── */
+const emailCache = {};
+
+async function loadEmail(){
+  const el=document.getElementById('emailBody');
+  const notice=document.getElementById('gmailAuthNotice');
+  if(!googleToken){notice.style.display='';el.innerHTML='<div class="empty">Connect Gmail above</div>';return 0;}
+  notice.style.display='none';
+  try{
+    const queries=['is:starred is:unread after:2025/05/01','from:@ridgelineei.com to:me is:unread after:2025/05/01'];
+    const allIds=new Set();
+    for(const q of queries){
+      const res=await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=10`,{headers:{Authorization:`Bearer ${googleToken}`}});
+      if(res.status===401){googleToken=null;localStorage.removeItem('dash_google_token');notice.style.display='';el.innerHTML='<div class="empty">Session expired</div>';return 0;}
+      if(!res.ok)continue;
+      const data=await res.json();
+      (data.messages||[]).forEach(m=>allIds.add(m.id));
     }
-    const newCards = project.tasks.map(t => ({...t, col: t.due ? 'due' : 'tasks'}));
-    const allCards = [...newCards, ...existingCards];
-    const payload = {cards: allCards, archived};
-    const body = {message:`Add tasks for ${name}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))))};
-    if(tasksSha) body.sha = tasksSha;
-    await fetch(TASKS_API, {method:'PUT', headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'}, body:JSON.stringify(body)});
-  }catch(e){ console.warn('Tasks save failed:', e); }
+    if(!allIds.size){el.innerHTML='<div class="empty">No flagged emails</div>';return 0;}
+    const dismissed=JSON.parse(localStorage.getItem('dash_dismissed_emails')||'[]');
+    const msgs=await Promise.all([...allIds].slice(0,10).map(async id=>{
+      if(dismissed.includes(id))return null;
+      const r=await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=full`,{headers:{Authorization:`Bearer ${googleToken}`}});
+      if(!r.ok)return null; return r.json();
+    }));
+    const valid=msgs.filter(Boolean);
+    if(!valid.length){el.innerHTML='<div class="empty">No flagged emails</div>';return 0;}
+    let actionCount=0;
+    el.innerHTML=valid.map(msg=>{
+      // Collect all headers from payload and any parts
+      const allHeaders=[...(msg.payload?.headers||[])];
+      const get=name=>{
+        const h=allHeaders.find(h=>h.name.toLowerCase()===name.toLowerCase());
+        return h?h.value:'';
+      };
+      const headers=allHeaders;
+      const from=get('From').replace(/<.*>/,'').trim();
+      const subject=get('Subject')||'(No subject)';
+      const snippet=msg.snippet||'';
+      const threadId=msg.threadId||msg.id;
+      const isStarred=(msg.labelIds||[]).includes('STARRED');
+      const isRidgeline=get('From').includes('@ridgelineei.com');
+      const looksLikeQ=/\?/.test(snippet)||/\?/.test(subject);
+      const looksLikeTask=/please|can you|could you|need you|action required|follow up|asap/i.test(snippet+subject);
+      if(looksLikeQ||looksLikeTask)actionCount++;
+      const gmailUrl=`https://mail.google.com/mail/u/0/#inbox/${threadId}`;
+      // Store email data for expand modal
+      emailCache[msg.id] = {subject, from: get('From'), date: get('Date'), snippet, threadId, gmailUrl};
+      return `<div class="email-item" id="email-${msg.id}" onclick="openEmailExpand('${msg.id}')">
+        <div class="email-header-row">
+          <div class="email-from">${esc(from)}${isRidgeline?' <span style="color:var(--blue);font-size:11px;">@REI</span>':''}</div>
+          <div class="email-actions">
+            <a href="${gmailUrl}" target="_blank" class="email-action-btn" title="Open in Gmail" onclick="event.stopPropagation()">↗</a>
+            <button class="email-action-btn" onclick="event.stopPropagation();dismissEmail('${msg.id}')" title="Dismiss">✕</button>
+          </div>
+        </div>
+        <div class="email-subject">${esc(subject)}</div>
+        <div class="email-snippet">${esc(snippet)}</div>
+        <div>${isStarred?'<span class="email-tag tag-starred">★ starred</span>':''}${looksLikeQ?'<span class="email-tag tag-question">? question</span>':''}${looksLikeTask?'<span class="email-tag tag-action">→ action</span>':''}</div>
+      </div>`;
+    }).join('');
+    return actionCount;
+  }catch(e){el.innerHTML='<div class="empty">Could not load email</div>';return 0;}
+}
+let expandEmailId = null;
+function openEmailExpand(id){
+  const e = emailCache[id];
+  if(!e) return;
+  expandEmailId = id;
+  document.getElementById('expandSubject').textContent = e.subject || '(No subject)';
+  const fromClean = e.from.replace(/<.*?>/g,'').trim();
+  const dateClean = e.date ? new Date(e.date).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true}) : '';
+  document.getElementById('expandMeta').innerHTML = `<span><strong>From:</strong> ${esc(fromClean)}</span><span><strong>Date:</strong> ${esc(dateClean)}</span>`;
+  document.getElementById('expandBody').textContent = e.snippet || '(No preview available — open in Gmail to read full email)';
+  document.getElementById('expandGmailLink').href = e.gmailUrl;
+  document.getElementById('emailExpandOverlay').classList.add('open');
+}
+function closeEmailExpand(){ document.getElementById('emailExpandOverlay').classList.remove('open'); expandEmailId=null; }
+function dismissEmailFromExpand(){ if(expandEmailId){ dismissEmail(expandEmailId); closeEmailExpand(); } }
 
-  closeNewProject();
-  render();
-  // Navigate to new project
-  window.location.href = `project.html?id=${project.id}`;
+function dismissEmail(id){
+  const dismissed=JSON.parse(localStorage.getItem('dash_dismissed_emails')||'[]');
+  dismissed.push(id);localStorage.setItem('dash_dismissed_emails',JSON.stringify(dismissed));
+  const el=document.getElementById('email-'+id);
+  if(el){el.style.opacity='0';el.style.transition='opacity 0.2s';setTimeout(()=>el.remove(),200);}
 }
 
-loadProjects();
+/* ── Prefab ── */
+async function loadPrefab(){
+  const el=document.getElementById('prefabBody');
+  try{
+    const res=await fetch(PREFAB_RAW+'?v='+Date.now());
+    if(!res.ok)throw new Error();
+    const projects=await res.json();
+    const active=projects.filter(p=>p.status!=='received');
+    if(!active.length){el.innerHTML='<div class="empty">No active prefab projects</div>';return 0;}
+    el.innerHTML=active.map(p=>{
+      const total=p.assemblies.length,done=p.assemblies.filter(a=>a.labelDone).length;
+      const pct=total?Math.round((done/total)*100):0;
+      const status={inprogress:'In Progress',ready:'Ready',shipped:'Shipped'}[p.status]||p.status;
+      const onSite=p.onSiteDate?new Date(p.onSiteDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+      const days=p.onSiteDate?Math.floor((new Date(p.onSiteDate)-new Date())/(1000*60*60*24)):null;
+      const urgent=days!==null&&days<=3;
+      return `<div class="prefab-item">
+        <div class="prefab-info">
+          <div class="prefab-name">${esc(p.name)}${p.num?` <span style="color:var(--text3);font-size:10px;">#${esc(p.num)}</span>`:''}</div>
+          <div class="prefab-meta">${status}${p.onSiteDate?' · '+new Date(p.onSiteDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}</div>
+        </div>
+        <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
+        <div class="prefab-pct">${pct}%</div>
+      </div>`;
+    }).join('');
+    return active.filter(p=>{const d=p.onSiteDate?Math.floor((new Date(p.onSiteDate)-new Date())/(1000*60*60*24)):null;return d!==null&&d<=3;}).length;
+  }catch(e){el.innerHTML='<div class="empty">Could not load</div>';return 0;}
+}
+
+/* ── Reminders ── */
+function renderReminders(){
+  const el=document.getElementById('remindersBody');
+  const active=reminders.filter(r=>!r.done).sort((a,b)=>new Date(a.due)-new Date(b.due));
+  if(!active.length){el.innerHTML='<div class="empty">No reminders</div>';return 0;}
+  const now=new Date();
+  el.innerHTML=active.map(r=>{
+    const due=new Date(r.due);
+    const isOverdue=due<now,isToday=due.toDateString()===now.toDateString();
+    const dueStr=due.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+    return `<div class="reminder-item">
+      <div class="reminder-check" onclick="doneReminder('${r.id}')"></div>
+      <div class="reminder-text">
+        <div class="reminder-name">${esc(r.text)}</div>
+        <div class="reminder-due ${isOverdue?'overdue':isToday?'today':''}">${isOverdue?'⚠ Overdue · ':isToday?'Today · ':''} ${dueStr}</div>
+      </div>
+      <button onclick="deleteReminder('${r.id}')" class="email-action-btn" style="opacity:0.5;flex-shrink:0;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">✕</button>
+    </div>`;
+  }).join('');
+  return active.filter(r=>new Date(r.due)<now).length;
+}
+function doneReminder(id){const r=reminders.find(x=>x.id===id);if(r){r.done=true;saveLocal();renderReminders();}}
+function deleteReminder(id){reminders=reminders.filter(x=>x.id!==id);saveLocal();renderReminders();}
+async function saveNewReminder(){
+  const text=document.getElementById('nrText').value.trim();
+  const due=document.getElementById('nrDue').value;
+  const addCal=document.getElementById('nrAddCal').checked;
+  if(!text){alert('Enter a reminder.');return;} if(!due){alert('Pick a time.');return;}
+  reminders.push({id:genId(),text,due,done:false,createdAt:Date.now()});
+  saveLocal();
+  if(addCal&&googleToken){
+    try{const start=new Date(due),end=new Date(start.getTime()+30*60*1000);
+      await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',headers:{Authorization:`Bearer ${googleToken}`,'Content-Type':'application/json'},body:JSON.stringify({summary:text,start:{dateTime:start.toISOString()},end:{dateTime:end.toISOString()}})});
+    }catch(e){}
+  }
+  closeNewReminder();renderReminders();
+}
+
+/* ── Notes ── */
+function loadNotes(){
+  const area=document.getElementById('notesArea');
+  area.value=localStorage.getItem('dash_notes')||'';
+  let t;
+  area.addEventListener('input',()=>{
+    clearTimeout(t);t=setTimeout(()=>{
+      localStorage.setItem('dash_notes',area.value);
+      const s=document.getElementById('notesSaved');
+      s.textContent='Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      setTimeout(()=>s.textContent='',3000);
+    },800);
+  });
+}
+
+/* ── Briefing ── */
+async function generateBriefing(force=false){
+  const el=document.getElementById('briefingBody');
+  const timeEl=document.getElementById('briefingTime');
+  const today=new Date().toDateString();
+  const cached=localStorage.getItem('dash_briefing_date');
+  const cachedHTML=localStorage.getItem('dash_briefing_html');
+  if(!force&&cached===today&&cachedHTML){el.innerHTML=cachedHTML;timeEl.textContent='Today';return;}
+  el.innerHTML='<div class="empty"><span class="spin">⟳</span> Building briefing…</div>';
+  const now=new Date();
+  const lines=[];
+  lines.push(`<strong>${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</strong>`);
+  try{
+    const r=await fetch(TASKS_RAW+'?v='+Date.now());
+    if(r.ok){
+      const d=await r.json();const cards=d.cards||d||[];
+      const active=cards.filter(c=>c.col!=='done');
+      const today_=cards.filter(c=>c.col==='today');
+      const overdue=active.filter(c=>c.due&&new Date(c.due+'T00:00:00')<now);
+      const highPri=active.filter(c=>c.priority==='high');
+      let line=`📋 <strong>${active.length} active task${active.length!==1?'s':''}</strong>`;
+      if(today_.length)line+=` · ${today_.length} in progress`;
+      if(highPri.length)line+=` · <span style="color:var(--red)">${highPri.length} high priority</span>`;
+      if(overdue.length)line+=` · <span style="color:var(--red)">⚠ ${overdue.length} overdue</span>`;
+      lines.push(line);
+      if(highPri.length)lines.push(`<span style="color:var(--text2);font-size:12px;margin-left:20px;">↳ ${highPri.slice(0,3).map(c=>esc(c.name||c.task||'Untitled')).join(' · ')}</span>`);
+    }
+  }catch(e){}
+  const activeRem=reminders.filter(r=>!r.done);
+  const overdueRem=activeRem.filter(r=>new Date(r.due)<now);
+  const todayRem=activeRem.filter(r=>{const d=new Date(r.due);return d>=now&&d.toDateString()===now.toDateString();});
+  if(activeRem.length){
+    let line=`⏰ <strong>${activeRem.length} reminder${activeRem.length!==1?'s':''}</strong>`;
+    if(overdueRem.length)line+=` · <span style="color:var(--red)">⚠ ${overdueRem.length} overdue</span>`;
+    if(todayRem.length)line+=` · ${todayRem.length} due today`;
+    lines.push(line);
+    if(overdueRem.length)lines.push(`<span style="color:var(--text2);font-size:12px;margin-left:20px;">↳ ${overdueRem.slice(0,2).map(r=>esc(r.text)).join(' · ')}</span>`);
+  }
+  try{
+    const r=await fetch(PREFAB_RAW+'?v='+Date.now());
+    if(r.ok){
+      const projects=await r.json();
+      const active=projects.filter(p=>p.status!=='received'&&p.status!=='shipped');
+      const urgent=active.filter(p=>{const d=p.onSiteDate?Math.floor((new Date(p.onSiteDate)-now)/(1000*60*60*24)):null;return d!==null&&d<=3;});
+      if(active.length){
+        let line=`📦 <strong>${active.length} prefab project${active.length!==1?'s':''}</strong>`;
+        if(urgent.length)line+=` · <span style="color:var(--red)">⚠ ${urgent.length} due soon</span>`;
+        lines.push(line);
+        urgent.slice(0,2).forEach(p=>{const days=Math.floor((new Date(p.onSiteDate)-now)/(1000*60*60*24));lines.push(`<span style="color:var(--text2);font-size:12px;margin-left:20px;">↳ ${esc(p.name)} — ${days<0?Math.abs(days)+'d overdue':days===0?'due today':days+'d to site'}</span>`);});
+      }
+    }
+  }catch(e){}
+  if(lines.length===1)lines.push('✅ <strong>All clear</strong> — no urgent items today.');
+  const html=`<div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.6;">${lines.map(l=>`<div class="briefing-row">${l}</div>`).join('')}</div><div class="briefing-meta">Updated ${now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})} · Click "✦ Briefing" to update</div>`;
+  localStorage.setItem('dash_briefing_date',today);localStorage.setItem('dash_briefing_html',html);
+  el.innerHTML=html;timeEl.textContent='Today';
+}
+function refreshBriefing(){generateBriefing(true);}
+
+/* ── Task actions ── */
+async function saveNewTask(){
+  const token=getGHToken();if(!token){alert('Enter your GitHub token in Settings.');return;}
+  const col=document.getElementById('ntCol').value,proj=document.getElementById('ntProj').value.trim();
+  const name=document.getElementById('ntName').value.trim(),task=document.getElementById('ntTask').value.trim();
+  const priority=document.getElementById('ntPriority').value,due=document.getElementById('ntDue').value;
+  if(!name&&!task){alert('Enter a project name or task.');return;}
+  try{
+    const res=await fetch(TASKS_API,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+    let cards=[],sha=null;
+    if(res.ok){const d=await res.json();sha=d.sha;const parsed=JSON.parse(atob(d.content.replace(/\n/g,'')));cards=parsed.cards||parsed;}
+    const newCard={id:genId(),col,proj,name,task,priority,due,subtasks:[],taskDone:false,createdAt:Date.now(),movedAt:Date.now()};
+    const arr=Array.isArray(cards)?cards:(cards.cards||[]);
+    const payload={cards:[newCard,...arr],archived:(cards.archived||[])};
+    const body={message:'Add task from dashboard',content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))))};
+    if(sha)body.sha=sha;
+    await fetch(TASKS_API,{method:'PUT',headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    closeNewTask();setTimeout(loadTasks,1200);
+  }catch(e){alert('Failed: '+e.message);}
+}
+async function completeTask(cardId){
+  const token=getGHToken();if(!token){alert('Enter your GitHub token in Settings.');return;}
+  const el=document.getElementById('task-'+cardId);
+  if(el){el.style.opacity='0.4';el.style.pointerEvents='none';}
+  try{
+    const res=await fetch(TASKS_API,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+    if(!res.ok)throw new Error();
+    const d=await res.json();const sha=d.sha;
+    const parsed=JSON.parse(atob(d.content.replace(/\n/g,'')));
+    const cards=parsed.cards||parsed;
+    const card=cards.find(c=>c.id===cardId);
+    if(card){card.col='done';card.taskDone=true;card.movedAt=Date.now();}
+    const payload=parsed.cards?{...parsed,cards}:{cards,archived:parsed.archived||[]};
+    await fetch(TASKS_API,{method:'PUT',headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:'Complete task',content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2)))),sha})});
+    // Log completion
+    const logs=JSON.parse(localStorage.getItem('dash_daily_log')||'{}');
+    const today=new Date().toDateString();if(!logs[today])logs[today]=[];
+    const c=cards.find(x=>x.id===cardId);
+    logs[today].push({type:'task_complete',task:c?.name||c?.task||'Task',proj:c?.proj||'',time:new Date().toISOString()});
+    localStorage.setItem('dash_daily_log',JSON.stringify(logs));
+    if(el)el.remove();
+  }catch(e){if(el){el.style.opacity='1';el.style.pointerEvents='';}alert('Failed.');}
+}
+
+/* ── Settings ── */
+function openSettings(){document.getElementById('ghTokenInput').value=getGHToken();document.getElementById('settingsModal').style.display='flex';}
+function closeSettings(){document.getElementById('settingsModal').style.display='none';}
+function saveSettings(){const gh=document.getElementById('ghTokenInput').value.trim();if(gh)localStorage.setItem('dash_gh_token',gh);closeSettings();refreshAll();}
+
+/* ── Modals ── */
+function openNewTask(){['ntProj','ntName','ntTask','ntDue'].forEach(id=>document.getElementById(id).value='');document.getElementById('ntPriority').value='';document.getElementById('ntCol').value='today';document.getElementById('newTaskModal').style.display='flex';setTimeout(()=>document.getElementById('ntName').focus(),100);}
+function closeNewTask(){document.getElementById('newTaskModal').style.display='none';}
+function openNewReminder(){document.getElementById('nrText').value='';document.getElementById('nrDue').value='';document.getElementById('nrAddCal').checked=false;document.getElementById('newReminderModal').style.display='flex';setTimeout(()=>document.getElementById('nrText').focus(),100);}
+function closeNewReminder(){document.getElementById('newReminderModal').style.display='none';}
+
+/* ── Active Projects ── */
+const PROJECTS_RAW = 'https://raw.githubusercontent.com/RidgeHub/Projects/main/projects.json';
+let dashProjects = [];
+
+async function loadActiveProjects(){
+  const el = document.getElementById('activeProjectsBody');
+  try{
+    const res = await fetch(PROJECTS_RAW + '?v=' + Date.now());
+    if(res.status === 404){ el.innerHTML='<div class="empty">No projects yet — create one in the Projects hub.</div>'; return 0; }
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    dashProjects = await res.json();
+    const active = dashProjects.filter(p => p.phase !== 'complete');
+    if(!active.length){ el.innerHTML='<div class="empty">No active projects</div>'; return 0; }
+    const PHASE_LABELS = {prover:'ProVer',design:'Design',prefab:'Prefab',active:'Active',complete:'Complete'};
+    const PHASE_PILL   = {prover:'pill-prover',design:'pill-design',prefab:'pill-prefab',active:'pill-active',complete:'pill-complete'};
+    el.innerHTML = active.map(p => {
+      const tasks = p.tasks||[];
+      const done  = tasks.filter(t=>t.done).length;
+      const total = tasks.length;
+      const pct   = total ? Math.round((done/total)*100) : 0;
+      const open  = tasks.filter(t=>!t.done);
+      const groups = [...new Set(open.map(t=>t.group))];
+      const phase = p.phase||'active';
+      const today = new Date();
+      // Build task groups HTML for expanded view
+      const groupsHTML = groups.map(g => {
+        const gt = open.filter(t=>t.group===g).slice(0,5);
+        return `<div class="proj-task-group">
+          <div class="proj-task-group-name">${esc(g)}</div>
+          ${gt.map(t => {
+            const dueStr = t.due ? new Date(t.due+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+            const overdue = t.due && new Date(t.due+'T00:00:00') < today;
+            return `<div class="proj-task-item">
+              <div class="proj-task-check" onclick="toggleDashProjectTask('${p.id}','${t.id}',this)">${t.done?'✓':''}</div>
+              <div class="proj-task-name">${esc(t.task.replace(/^\[.*?\]\s*/,''))}</div>
+              ${dueStr?`<div class="proj-task-due ${overdue?'overdue':''}">${overdue?'⚠ ':''}${dueStr}</div>`:''}
+            </div>`;
+          }).join('')}
+        </div>`;
+      }).join('');
+      const infoHTML = [
+        p.gc?`<div class="proj-info-item">GC: <span>${esc(p.gc)}</span></div>`:'',
+        p.inWall?`<div class="proj-info-item">In-Wall: <span>${esc(p.inWall)}</span></div>`:'',
+        p.overhead?`<div class="proj-info-item">Overhead: <span>${esc(p.overhead)}</span></div>`:'',
+        p.devColor?`<div class="proj-info-item">Devices: <span>${esc(p.devColor)}</span></div>`:'',
+        p.proVerDate?`<div class="proj-info-item">ProVer: <span>${new Date(p.proVerDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span></div>`:'',
+      ].filter(Boolean).join('');
+      return `<div class="proj-card" id="dashproj-${p.id}">
+        <div class="proj-card-header" onclick="toggleDashProject('${p.id}')">
+          <div class="proj-toggle" id="toggle-${p.id}">›</div>
+          <div class="proj-header-info">
+            <div class="proj-header-name">${esc(p.name)}${p.num?` <span style="font-size:12px;font-weight:400;color:#8aaac8;">#${esc(p.num)}</span>`:''}</div>
+            <div class="proj-header-meta">${done}/${total} tasks · ${open.length} remaining</div>
+          </div>
+          <span class="proj-phase-pill ${PHASE_PILL[phase]||'pill-active'}">${PHASE_LABELS[phase]||phase}</span>
+          <div class="proj-prog-wrap">
+            <div class="proj-prog-bar"><div class="proj-prog-fill ${pct===100?'done':''}" style="width:${pct}%"></div></div>
+            <div class="proj-prog-label">${pct}%</div>
+          </div>
+        </div>
+        <div class="proj-body" id="projbody-${p.id}">
+          ${infoHTML?`<div class="proj-info-row">${infoHTML}</div>`:''}
+          ${groupsHTML||'<div class="empty" style="padding:0.5rem 0;">All tasks complete 🎉</div>'}
+          <a href="https://ridgehub.github.io/Projects/project.html?id=${p.id}" target="_blank" class="proj-open-link">↗ Open Full Project</a>
+        </div>
+      </div>`;
+    }).join('');
+    return active.length;
+  }catch(e){
+    el.innerHTML='<div class="empty">Could not load projects</div>';
+    return 0;
+  }
+}
+
+function toggleDashProject(id){
+  const body = document.getElementById('projbody-'+id);
+  const toggle = document.getElementById('toggle-'+id);
+  if(!body||!toggle) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+async function toggleDashProjectTask(projId, taskId, el){
+  const proj = dashProjects.find(p=>p.id===projId);
+  if(!proj) return;
+  const task = (proj.tasks||[]).find(t=>t.id===taskId);
+  if(!task) return;
+  task.done = !task.done;
+  task.doneAt = task.done ? new Date().toISOString() : null;
+  el.classList.toggle('done', task.done);
+  el.textContent = task.done ? '✓' : '';
+  el.parentElement.querySelector('.proj-task-name').classList.toggle('done-task', task.done);
+  // Save back to projects.json
+  const token = getGHToken();
+  if(!token) return;
+  try{
+    const meta = await fetch('https://api.github.com/repos/RidgeHub/Projects/contents/projects.json',{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+    if(!meta.ok) return;
+    const d = await meta.json();
+    const sha = d.sha;
+    await fetch('https://api.github.com/repos/RidgeHub/Projects/contents/projects.json',{
+      method:'PUT',
+      headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Update task from dashboard',content:btoa(unescape(encodeURIComponent(JSON.stringify(dashProjects,null,2)))),sha})
+    });
+  }catch(e){}
+}
+
+/* ── Refresh all ── */
+async function refreshAll(){
+  await silentRefresh();
+  const btn=document.getElementById('refreshBtn');btn.textContent='↺ Refreshing…';
+  const [taskU,,emailA,prefabU]= await Promise.all([loadTasks(),loadCalendar(),loadEmail(),loadPrefab()]);
+  loadActiveProjects();
+  const remU=renderReminders();
+  updateBadge((taskU||0)+(emailA||0)+(prefabU||0)+(remU||0));
+  btn.textContent='↺ Refresh';
+}
+
+/* ── Init ── */
+checkOAuthReturn();
+googleToken=localStorage.getItem('dash_google_token')||null;
+loadLocal();loadNotes();updateClock();setInterval(updateClock,1000);
+loadWeather();
+if(!getGHToken()){openSettings();}else{refreshAll();generateBriefing();}
+setInterval(refreshAll,10*60*1000);
+setInterval(silentRefresh,45*60*1000);
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='n'||e.key==='N')openNewTask();
+  if(e.key==='r'||e.key==='R')openNewReminder();
+  if(e.key==='f'||e.key==='F')openFocusMode();
+  if(e.key==='Escape'){exitFocus();closeSettings();closeNewTask();closeNewReminder();closeWeekView();}
+});
 </script>
 </body>
 </html>
