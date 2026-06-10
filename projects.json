@@ -29,9 +29,10 @@
         "due": "",
         "subtasks": [],
         "taskDone": false,
-        "done": false,
+        "done": true,
         "createdAt": 1781093192480,
-        "movedAt": 1781093192480
+        "movedAt": 1781093192480,
+        "doneAt": "2026-06-10T12:06:53.143Z"
       },
       {
         "id": "mq80weu84h4",
@@ -111,9 +112,10 @@
         "due": "",
         "subtasks": [],
         "taskDone": false,
-        "done": false,
+        "done": true,
         "createdAt": 1781093192481,
-        "movedAt": 1781093192481
+        "movedAt": 1781093192481,
+        "doneAt": "2026-06-10T12:06:56.686Z"
       },
       {
         "id": "mq80weu81tr",
