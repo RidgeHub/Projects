@@ -322,9 +322,10 @@
         "due": "",
         "subtasks": [],
         "taskDone": false,
-        "done": false,
+        "done": true,
         "createdAt": 1781093192481,
-        "movedAt": 1781093192481
+        "movedAt": 1781093192481,
+        "doneAt": "2026-06-10T12:16:28.022Z"
       },
       {
         "id": "mq80weu8abw",
